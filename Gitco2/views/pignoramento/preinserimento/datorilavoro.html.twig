@@ -1,0 +1,189 @@
+<form id="f_datore_lavoro" name="f_datore_lavoro" action="{{form_datore_lavoro.action}}" method="post">
+  <input type="hidden" name="Partita_ID" value="{{partita.ID}}" >
+  <input type="hidden" name="Utente_ID" value="{{partita.Utente_ID}}" >
+  <input type="hidden" name="c" value="{{partita.CC}}" >
+  <input type="hidden" name="a" value="{{partita.Anno_Riferimento}}" >
+
+  <div class="row rowTerzoStart">
+    <div class="col col-sm-4" style="margin-bottom:1rem">
+      <input type="button" onclick="aggiungiDatoreLavoro();" class="btn btn-primary" value="Nuovo">
+      <input type="submit" id="datoreLavoroSubmit" class="btn btn-danger" value="Salva" disabled>
+    </div>
+      
+  </div>
+
+
+{% for keyPvt, pvt_datore_lavoro in pvt_datori_lavoro %}
+
+  <div class="row rowTerzo{{keyPvt}} genRowTerzo" style="padding-top:1rem;background-color:whitesmoke;margin-bottom: 1rem;border-bottom: 1px solid grey; padding-bottom:1rem">
+
+    <div class="col-sm-2" style="color: #294A9C;line-height:3.5rem">
+      <b>DATORE DI LAVORO <i class="fa-solid fa-user-xmark" style="color:red; cursor: pointer" title="Elimina terzo" onclick="rimuoviDatoreLavoro({{keyPvt}})"></i></b>
+        <input type="hidden" id="TerzoPvt_ID_{{keyPvt}}" name="TerzoPvt[{{keyPvt}}][ID]" value="{{pvt_datore_lavoro.ID}}">
+        <input type="hidden" id="DatoreLavoro_ID_{{keyPvt}}" name="TerzoPvt[{{keyPvt}}][Terzo_ID]" value="{{pvt_datore_lavoro.Terzo_ID}}">
+    </div>
+    <div class="col-sm-4">
+      <input class="form-control resize" style="width: 50rem; background-color: rgb(153, 204, 255); border: 2px solid black;" 
+      readonly id="DatoreLavoro_{{keyPvt}}" value="({{pvt_datore_lavoro.Terzo_Comune_ID}}) {{pvt_datore_lavoro.Denominazione_Datore_Lavoro}}" ondblclick="/*caricaUtente({{keyPvt}});*/openOfcanvas('companySearchModal',{{keyPvt}});">
+      
+    </div>
+    <div class="col-sm-6 text-right" style="line-height:3.5rem">
+      <b>{{ pvt_datore_lavoro.Data_Aggiornamento is empty ? "":"Aggiornato il "~pvt_datore_lavoro.Data_Aggiornamento|date('d/m/Y') }}</b>
+    </div>
+
+  </div>
+  <div class="row rowTerzo{{keyPvt}}" style="margin-top:1rem;padding:0.2rem;">
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Azienda</label>
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Azienda]"
+      value="{{pvt_datore_lavoro.Azienda}}">
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Fonte dati</label>    
+    </div>
+    <div class="col-sm-4">
+       <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Fonte_Dati]"
+      value="{{pvt_datore_lavoro.Fonte_Dati}}">
+    </div>
+  </div>
+  <div class="row rowTerzo{{keyPvt}}" style="padding:0.2rem;">
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Tipo contratto</label>
+    </div>
+    <div class="col-sm-4">
+      <select name="TerzoPvt[{{keyPvt}}][Tipo_Contratto_Lavoro]" style="width: 20rem">
+        {{pvt_datore_lavoro.optContratti|raw}}
+      </select>
+          
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Note</label>    
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Note]"
+      value="{{pvt_datore_lavoro.Note}}">
+    </div>
+  </div>
+  <div class="row rowTerzo{{keyPvt}}" style="padding:0.2rem; border-bottom: 1px solid grey; padding-bottom:1rem">
+    <div class="col-sm-2 ">
+      <b>Data Costituzione</b>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="TerzoPvt[{{keyPvt}}][Data_Costituzione_Ditta_Lavoro]"
+      value="{{ pvt_datore_lavoro.Data_Costituzione_Ditta_Lavoro is empty ? "":pvt_datore_lavoro.Data_Costituzione_Ditta_Lavoro|date('d/m/Y') }}"  >
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label " >Data Ditta Operativa</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="TerzoPvt[{{keyPvt}}][Data_Ditta_Operativa_Lavoro]"
+      value="{{ pvt_datore_lavoro.Data_Ditta_Operativa_Lavoro is empty ? "":pvt_datore_lavoro.Data_Ditta_Operativa_Lavoro|date('d/m/Y') }}"  >
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label " >Data Dipendenze</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="TerzoPvt[{{keyPvt}}][Data_Dipendenze_Lavoro]"
+      value="{{ pvt_datore_lavoro.Data_Dipendenze_Lavoro is empty ? "":pvt_datore_lavoro.Data_Dipendenze_Lavoro|date('d/m/Y') }}"  >
+    </div>
+  </div>
+  
+{% endfor %}
+
+</form>
+
+<script>
+
+  var numeroDatoriLavoro = {{pvt_datori_lavoro|length}}-1;
+  function enableSaveLavoro(){
+    if($('.genRowTerzo').length>0)
+      $('#datoreLavoroSubmit').prop('disabled',false);
+    else
+      $('#datoreLavoroSubmit').prop('disabled',true);
+  }
+  
+
+  function rimuoviDatoreLavoro(numero){
+
+    if(confirm("Vuoi eliminare il datore di lavoro?")){
+      terzoPvtId = parseInt($('#TerzoPvt_ID_'+numero).val());
+      if(terzoPvtId>0){
+        $.ajax({
+          type: 'POST',
+          url: '{{form_datore_lavoro.delete}}',
+          data : {
+            'TerzoPvt_ID' : terzoPvtId,
+            'Partita_ID' : {{partita.ID}},
+            'c': '{{partita.CC}}',
+            'a': {{partita.Anno_Riferimento}}
+          },
+          success: function(result){
+              console.log(result);
+              $('.rowTerzo'+numero).remove();
+              enableSaveLavoro();
+              alert("Eliminazione avvenuta con successo");
+          },
+          error: function(err){
+              alert("Errore nella eliminazione!!");
+              console.log(err);
+          }
+        });
+      }
+      else{
+        $('.rowTerzo'+numero).remove();
+        enableSaveLavoro();
+      }
+      
+    }
+
+     
+   
+  }
+
+  function aggiungiDatoreLavoro(){
+    lastTerzo = numeroDatoriLavoro;
+    numeroDatoriLavoro++;
+    $.ajax({
+        method: "POST",
+        url: "{{PATHS.WEB_ROOT}}/coattiva/templates/templateDatoreLavoro.php",
+        data: {
+            'rowKey' : numeroDatoriLavoro,
+            'Partita_ID' : {{partita.ID}},
+            'c': '{{partita.CC}}',
+            'a': {{partita.Anno_Riferimento}}
+        },
+        dataType: 'json',
+        success: function (response) {
+            if( response.status === true ) {
+              
+              if($('.genRowTerzo').length>0)
+                $('.rowTerzo'+lastTerzo+':last').after(response.data);
+              else
+                $('.rowTerzoStart').after(response.data);
+
+                $( ".picker" ).datepicker(); 
+              enableSaveLavoro();
+            }
+        }
+    });
+    
+
+  }
+
+function caricaUtente(numero)
+{
+
+    selectParent = "carica_utente";
+    num = numero;
+
+    var stringa = "{{PATHS.WEB_ROOT}}/search/comuni/ricerca_alert_modale.php?richiesta=ditta&c={{partita.CC}}&a={{partita.Anno_Riferimento}}&";
+
+    openWindowSearch(stringa,{width:700, height:500, left:(window.screen.width/2)-350, top:(window.screen.height/2)-250});
+
+}
+
+enableSaveLavoro();
+
+</script>

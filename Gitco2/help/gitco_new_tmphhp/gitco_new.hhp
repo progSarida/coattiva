@@ -1,0 +1,47 @@
+[OPTIONS]
+Language=0x409 English (United States)
+Default Font=Arial,8,0
+TITLE=Gitco_New
+Full-text search=Yes
+Display compile notes=YES
+Display compile progress=YES
+Compatibility=1.1
+Auto Index=Yes
+Default Window=Main
+Compiled file=gitco_new.chm
+Error Log file=gitco_new.log
+Contents file=gitco_new.hhc
+Index File=gitco_new.hhk
+Default Topic=Iniziamo.html
+
+[FILES]
+Iniziamo.html
+BenvenutoinGitco.html
+Contattaci.html
+SaridaSrl.html
+DatiSoggetto.html
+Annotazioni.html
+Domicilio.html
+Recapito.html
+Dettagli.html
+CambioResidenza.html
+FAQ.html
+
+
+
+
+[WINDOWS]
+Main="Gitco_New","gitco_new.hhc","gitco_new.hhk","Iniziamo.html","Iniziamo.html",,,,,0x61520,200,0x384e,[50,50,450,450],0x307e,,,,,,0
+Popup="Popup","gitco_new.hhc","gitco_new.hhk","Iniziamo.html","Iniziamo.html", ,,,,0x00061520,200, 0x0000384E,[50,50,450,450],0x307e,0x8,,,,,0
+
+
+[MAP]
+#include gitco_new.h
+
+
+
+[TEXT POPUPS]
+CSHelp.txt
+
+ 
+

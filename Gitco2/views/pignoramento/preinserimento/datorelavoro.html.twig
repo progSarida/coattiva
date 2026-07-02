@@ -1,0 +1,65 @@
+
+ <div class="row rowTerzo{{keyPvt}} genRowTerzo" style="padding-top:1rem;background-color:whitesmoke;margin-bottom: 1rem;border-bottom: 1px solid grey; padding-bottom:1rem">
+
+    <div class="col-sm-2" style="color: #294A9C;line-height:3.5rem">
+      <b>DATORE DI LAVORO <i class="fa-solid fa-user-xmark" style="color:red; cursor: pointer" title="Elimina terzo" onclick="rimuoviDatoreLavoro({{keyPvt}})"></i></b>
+        <input type="hidden" id="TerzoPvt_ID_{{keyPvt}}" name="TerzoPvt[{{keyPvt}}][ID]">
+        <input type="hidden" id="DatoreLavoro_ID_{{keyPvt}}" name="TerzoPvt[{{keyPvt}}][Terzo_ID]">
+    </div>
+    <div class="col-sm-4">
+      <input class="form-control resize" style="width: 50rem; background-color: rgb(153, 204, 255); border: 2px solid black;" 
+      readonly id="DatoreLavoro_{{keyPvt}}" ondblclick="/*caricaUtente({{keyPvt}});*/openOfcanvas('companySearchModal',{{keyPvt}});">
+      
+    </div>
+  </div>
+  <div class="row rowTerzo{{keyPvt}}" style="padding-top:1rem">
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Azienda</label>
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Azienda]">
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Fonte dati</label>    
+    </div>
+    <div class="col-sm-4">
+       <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Fonte_Dati]">
+    </div>
+  </div>
+  <div class="row rowTerzo{{keyPvt}}" >
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Tipo contratto</label>
+    </div>
+    <div class="col-sm-4">
+      <select name="TerzoPvt[{{keyPvt}}][Tipo_Contratto_Lavoro]" style="width: 20rem">
+        {{optContratti|raw}}
+      </select>
+          
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Note</label>    
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Note]">
+    </div>
+  </div>
+  <div class="row rowTerzo{{keyPvt}}" style="margin-bottom: 1rem;margin-top: 1rem;border-bottom: 1px solid grey; padding-bottom:1rem" >
+    <div class="col-sm-2" >
+      <label class="control-label resize">Data Costituzione</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="TerzoPvt[{{keyPvt}}][Data_Costituzione_Ditta_Lavoro]">
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label " >Data Ditta Operativa</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="TerzoPvt[{{keyPvt}}][Data_Ditta_Operativa_Lavoro]">
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label " >Data Dipendenze</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="TerzoPvt[{{keyPvt}}][Data_Dipendenze_Lavoro]" >
+    </div>
+  </div>

@@ -1,0 +1,18 @@
+Microsoft (R) Help Compiler
+HCRTF 4.03.0002
+Copyright (c) Microsoft Corp 1990 - 1995. All rights reserved.
+gitco_new.hpj
+    HC4008: Warning: 
+	Cannot find or load FTSRCH.DLL. Hall compression turned off.
+    HC4012: Warning: 
+	The full-text search index cannot be created because neither Phrase nor Hall compression has been selected.
+11	Topics
+0	Jumps
+11	Keywords
+0	Bitmaps
+
+
+Created C:\PROGRA~2\EASYPH~1.1\www\html\Gitco2\help\gitco_new_tmphpj\gitco_new.hlp, 12,724 bytes
+Zeck compression decreased help file by 281 bytes.
+Compile time: 0 minutes, 0 seconds
+0 notes, 2 warnings

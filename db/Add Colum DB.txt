@@ -1,0 +1,17 @@
+/********************** AGGIUNTA E POPOLAMENTO COLONNA PrintTypeId (IN notifica_atto) *************************************/
+
+ALTER TABLE notifica_atto ADD PrintTypeId int
+
+UPDATE notifica_atto
+SET PrintTypeId = CASE
+    WHEN Modalita_Stampa = 'posta' THEN 1
+    WHEN Modalita_Stampa = 'pec' THEN 4
+    WHEN Modalita_Stampa = 'raccomandata' THEN 2
+    WHEN Modalita_Stampa = 'ordinaria' THEN 3
+    WHEN Modalita_Stampa = 'mani' THEN 6
+    ELSE NULL
+END
+
+/***************************************************************************************************************************/
+
+ALTER TABLE pignoramento_generale ADD Data_Protocollo date

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="VisureNominative"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:types="http://aci.it/jo/visurenominative/xml"
+             xmlns:tns="http://aci.it/jo/visurenominative/xmldef"
+             targetNamespace="http://aci.it/jo/visurenominative/xmldef">
+  <types>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="http://aci.it/jo/visurenominative/xml"
+                  schemaLocation="visure_nominative.xsd"/>
+    </xsd:schema>
+  </types>
+  <message name="RicercaPerNominativoInput">
+    <part element="types:DatiRichiesta" name="body"/>
+  </message>
+  <message name="RicercaPerNominativoOutput">
+    <part element="types:VisuraNominativa" name="body"/>
+  </message>
+  <portType name="VisureNominativePortType">
+   
+    <operation name="RicercaPerNominativo">
+      <input message="tns:RicercaPerNominativoInput"/>
+      <output message="tns:RicercaPerNominativoOutput"/>
+    </operation>
+    
+    <operation name="RicercaPerCodiceFiscale">
+      <input message="tns:RicercaPerNominativoInput"/>
+      <output message="tns:RicercaPerNominativoOutput"/>
+    </operation>
+    <operation name="RicercaPerPartitaIva">
+      <input message="tns:RicercaPerNominativoInput"/>
+      <output message="tns:RicercaPerNominativoOutput"/>
+    </operation>
+
+
+  </portType>
+  <binding name="VisureNominativeBinding" type="tns:VisureNominativePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="RicercaPerNominativo">
+      <soap:operation soapAction="http://aci.it/jo/visurenominative/RicercaPerNominativo"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+     
+    <operation name="RicercaPerCodiceFiscale">
+      <soap:operation soapAction="http://aci.it/jo/visurenominative/RicercaPerCodiceFiscale"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="RicercaPerPartitaIva">
+      <soap:operation soapAction="http://aci.it/jo/visurenominative/RicercaPerPartitaIva"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+     
+  </binding>
+  <service name="VisureNominativeService">
+    <port binding="tns:VisureNominativeBinding" name="VisureNominativePort">
+      <soap:address location="http://addpra1.servizi.aci/VisureNominative-add/services/visurenominative"/>
+    </port>
+  </service>
+</definitions>

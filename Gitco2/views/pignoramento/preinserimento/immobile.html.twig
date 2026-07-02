@@ -1,0 +1,247 @@
+<div class="row rowImmobile{{keyPvt}} genRowImmobile" style="padding-top:1rem;background-color:whitesmoke;margin-bottom: 1rem;border-bottom: 1px solid grey; padding-bottom:1rem">
+    <div class="col-sm-6" style="color: #294A9C;">
+      <b>IMMOBILE <i class="fa-solid fa-xmark fa-lg" style="margin-left:2rem;color:red; cursor: pointer" title="Elimina immobile" onclick="rimuoviImmobile({{keyPvt}})"></i></b>
+        <input type="hidden" id="ImmobilePvt_ID_{{keyPvt}}" name="ImmobilePvt[{{keyPvt}}][ID]" value="{{pvt_immobile.ID}}">
+    </div>
+    
+    <div class="col-sm-6 text-right">
+      <b>{{ pvt_immobile.Data_Aggiornamento is empty ? "":"Aggiornato il "~pvt_immobile.Data_Aggiornamento|date('d/m/Y') }}</b>
+    </div>
+  </div>
+  <div class="row rowImmobile{{keyPvt}}" style="margin-top:1rem;padding:0.2rem;">
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Tipo immobile</label>
+    </div>
+    <div class="col-sm-3">
+      <select class="form-control resize " id="Tipo_Immobiliare{{keyPvt}}" name="ImmobilePvt[{{keyPvt}}][Tipo_Immobiliare]" onchange="changeTipoImmobiliare({{keyPvt}});" style="width: 20rem">
+      {{optTipo|raw}}
+      </select>
+    </div>
+    <div class="col-sm-3" >
+      <label class="control-label resize " >Classe</label>
+      <input class="text_left" style="width:12rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Classe]"
+      value="{{pvt_immobile.Classe}}">
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label " >Possesso</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_right" style="width:6rem;" type="number" name="ImmobilePvt[{{keyPvt}}][Parte_Proprietario]"
+      value="{{pvt_immobile.Parte_Proprietario}}">
+      /
+      <input class="text_right" style="width:6rem;" type="number" name="ImmobilePvt[{{keyPvt}}][Totale_Proprietario]"
+      value="{{pvt_immobile.Totale_Proprietario}}">
+    </div>
+    
+    
+  </div>
+  <div class="row rowImmobile{{keyPvt}}" style="padding:0.2rem;">
+    
+    <div class="col-sm-3 ">
+      <b>Situazione</b>
+      <input class="text_right" type="number" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Situazione]"
+      value="{{pvt_immobile.Situazione}}">
+    </div>
+
+    <div class="col-sm-3">
+      <label class="control-label " >Foglio</label> 
+      <input class="text_right" type="number" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Foglio]"
+      value="{{pvt_immobile.Foglio}}">   
+    </div>
+
+    <div class="col-sm-3">
+      <label class="control-label " >Particella</label> 
+      <input class="text_right" type="number" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Particella]"
+      value="{{pvt_immobile.Particella}}">   
+    </div>
+
+    <div class="col-sm-3" >
+      <label class="control-label " >Subalterno</label>
+      <input class="text_right" type="number" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Subalterno]"
+      value="{{pvt_immobile.Subalterno}}">
+    </div>
+    
+  </div>
+  
+  <div class="row rowImmobile{{keyPvt}}" style="margin-bottom: 1rem;border-bottom: 1px solid grey; padding:0.2rem;padding-bottom:1rem">
+    <div class="col-sm-2">
+      <label class="control-label " >Annotazioni</label>    
+    </div>
+    <div class="col-sm-10">
+      <input class="text_left" style="width:99%" name="ImmobilePvt[{{keyPvt}}][Annotazioni]"
+      value="{{pvt_immobile.Annotazioni}}">
+    </div>
+  </div>
+
+  <div class="row rowImmobile{{keyPvt}} row_fabbricato{{keyPvt}}" style="margin-top:1rem;padding:0.2rem;">
+    <div class="col-sm-2" >
+      <label class="control-label resize " style="color: #294A9C;">FABBRICATO</label>
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label ">Indirizzo</label>
+    </div>
+    <div class="col-sm-8">
+      <input class="text_left" style="width:99%;" name="ImmobilePvt[{{keyPvt}}][Indirizzo_Fabbricato]"
+      value="{{pvt_immobile.Indirizzo_Fabbricato}}">
+    </div>
+  </div>
+  <div class="row rowImmobile{{keyPvt}} row_fabbricato{{keyPvt}}" style="padding:0.2rem;">
+  <div class="col-sm-2" ></div>
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Categoria</label>
+    </div>
+    <div class="col-sm-3">
+      <select class="form-control" name="ImmobilePvt[{{keyPvt}}][Categoria_Fabbricato]" style="width: 25rem">
+      {{optCategoria|raw}}
+      </select>
+    </div>
+   
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Protocollo notifica</label>
+      
+    </div>
+    <div class="col-sm-3" >
+      <input class="text_left" style="width:96%;" name="ImmobilePvt[{{keyPvt}}][Protocollo_Notifica_Fabbricato]"
+      value="{{pvt_immobile.Protocollo_Notifica_Fabbricato}}">
+    </div>
+  </div>
+  <div class="row rowImmobile{{keyPvt}} row_fabbricato{{keyPvt}}" style="padding:0.2rem;">
+    <div class="col-sm-2" ></div>
+    <div class="col-sm-2" ><label class="control-label resize " >Sezione</label></div>
+    <div class="col-sm-3" >
+      <input class="text_left" style="width:15rem;" name="ImmobilePvt[{{keyPvt}}][Sezione_Fabbricato]"
+      value="{{pvt_immobile.Sezione_Fabbricato}}" >
+      </div>
+    <div class="col-sm-2" ><label class="control-label resize " >Zona Censuaria</label></div>
+    <div class="col-sm-3" >
+      <input class="text_left" style="width:15rem;" name="ImmobilePvt[{{keyPvt}}][Zona_Censuaria_Fabbricato]"
+      value="{{pvt_immobile.Zona_Censuaria_Fabbricato}}" >
+      </div>
+  </div>
+  
+  <div class="row rowImmobile{{keyPvt}} row_fabbricato{{keyPvt}}" style="border-bottom: 1px solid grey; padding:0.2rem;padding-bottom:1rem">
+  <div class="col-sm-2" ></div>
+    <div class="col-sm-3" >
+      <div class="col-sm-4" style="padding:0">
+        <label class="control-label resize " >Consistenza</label>
+      </div>
+      <div class="col-sm-8" >
+        <input class="text_right vld_dec" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Consistenza_Fabbricato]"
+        value="{{pvt_immobile.Consistenza_Fabbricato}}" >
+      </div>
+    </div>
+
+    <div class="col-sm-3" style="padding:0">
+      <div class="col-sm-4" >
+        <label class="control-label resize " >Superficie</label>
+      </div>
+      <div class="col-sm-8" >
+          <input class="text_right" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Superficie_Fabbricato]"
+          value="{{pvt_immobile.Superficie_Fabbricato}}" >
+          mq
+      </div>
+    </div>
+    <div class="col-sm-3" style="padding:0">
+      <div class="col-sm-4" >
+        <label class="control-label resize " >Rendita</label>
+      </div>
+      <div class="col-sm-8" >
+        <input class="text_right" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Rendita_Fabbricato]"
+      value="{{pvt_immobile.Rendita_Fabbricato}}" >
+      &euro;
+      </div>
+    </div>
+  </div>
+
+  <div class="row rowImmobile{{keyPvt}} row_terreno{{keyPvt}}" style="margin-top:1rem;padding:0.2rem;">
+    <div class="col-sm-2" >
+      <label class="control-label resize " style="color: #294A9C;">TERRENO</label>
+    </div>
+    <div class="col-sm-5 ">
+      <b>Porzione</b>
+      <input class="text_right" type="number" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Porzione_Terreno]"
+      value="{{pvt_immobile.Porzione_Terreno}}">
+      <label class="control-label " style="margin-left:1rem">Qualità</label> 
+      <input class="text_right" type="number" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Qualita_Terreno]"
+      value="{{pvt_immobile.Qualita_Terreno}}">  
+    </div>
+    <div class="col-sm-5 "> 
+      <label class="control-label " style="margin-left:1rem">Descrizione qualità</label> 
+      <input class="text_left" style="width:25rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Descrizione_Qualita_Terreno]"
+      value="{{pvt_immobile.Descrizione_Qualita_Terreno}}">   
+    </div>
+  </div>
+  <div class="row rowImmobile{{keyPvt}} row_terreno{{keyPvt}}" style="padding:0.2rem;">
+    <div class="col-sm-2" ></div>
+    <div class="col-sm-3" style="padding:0">
+      <div class="col-sm-4" >
+        <label class="control-label resize " >Ettari</label>
+      </div>
+      <div class="col-sm-8" >
+        <input class="text_right" type="number" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][HA_Ettari_Terreno]"
+        value="{{pvt_immobile.HA_Ettari_Terreno}}">
+        HA
+      </div>
+    </div>
+
+    <div class="col-sm-3" style="padding:0">
+      <div class="col-sm-4" >
+        <label class="control-label resize " >Are</label>
+      </div>
+      <div class="col-sm-8" >
+        <input class="text_right" type="number" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][A_Are_Terreno]"
+        value="{{pvt_immobile.A_Are_Terreno}}">
+        A
+      </div>
+    </div>
+    <div class="col-sm-3" style="padding:0">
+      <div class="col-sm-4" >
+        <label class="control-label resize " >Centiare</label>
+      </div>
+      <div class="col-sm-8" >
+        <input class="text_right" type="number" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][C_Centiare_Terreno]"
+        value="{{pvt_immobile.C_Centiare_Terreno}}"> 
+        C
+      </div> 
+    </div>
+  </div>
+  <div class="row rowImmobile{{keyPvt}} row_terreno{{keyPvt}}" style="border-bottom: 1px solid grey; padding:0.2rem;padding-bottom:1rem">
+    <div class="col-sm-2">
+      
+    </div>
+    <div class="col-sm-3" style="padding:0">
+      <div class="col-sm-4" >
+        <label class="control-label resize " >Domenicale</label>
+      </div>
+      <div class="col-sm-8" >
+        <input class="text_right vld_dec" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Dominicale_Terreno]"
+        value="{{pvt_immobile.Dominicale_Terreno}}" >
+        &euro;
+      </div>
+    </div>
+
+    <div class="col-sm-3" style="padding:0">
+      <div class="col-sm-4" >
+        <label class="control-label resize " >Agrario</label>
+      </div>
+      <div class="col-sm-8" >
+          <input class="text_right" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Agrario_Terreno]"
+          value="{{pvt_immobile.Agrario_Terreno}}" >
+          &euro;
+      </div>
+    </div>
+    <div class="col-sm-3" style="padding:0">
+      <div class="col-sm-4" >
+        <label class="control-label resize " >Deduzioni</label>
+      </div>
+      <div class="col-sm-8" >
+        <input class="text_right" style="width:8rem;margin-left:1rem" name="ImmobilePvt[{{keyPvt}}][Deduzioni_Terreno]"
+        value="{{pvt_immobile.Deduzioni_Terreno}}" >
+        &euro;
+      </div>
+    </div>
+  </div>
+
+   <script>
+    changeTipoImmobiliare({{keyPvt}});
+  </script>

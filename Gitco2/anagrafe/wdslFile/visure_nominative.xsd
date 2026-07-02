@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2005 U (http://www.xmlspy.com) by any (Ru-Board) -->
+<schema xmlns:vn="http://aci.it/jo/visurenominative/xml" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://aci.it/jo/visurenominative/xml" elementFormDefault="qualified">
+	<element name="VisuraNominativa">
+		<complexType>
+			<sequence>
+				<element ref="vn:DatiRichiesta" minOccurs="0"/>
+				<element ref="vn:DatiRisposta"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="DatiRichiesta">
+		<!--Dati della Richiesta-->
+		<complexType>
+			<sequence>
+				<element name="DataRichiesta" type="date"/>
+				<!--Data di Sistema-->
+				<element name="TipoRichiesta" type="vn:tipoRichiesta"/>
+				<!--Tipo della Richiesta: Nominativo/CodiceFiscale/PartitaIva-->
+				<element name="CodiceFiscale" type="string" minOccurs="0" nillable="true"/>
+				<!--CodiceFiscale-->
+				<element name="PartitaIva" type="string" minOccurs="0" nillable="true"/>
+				<!--PartitaIVA-->
+				<element name="TipoPersona" type="string" minOccurs="0" nillable="true"/>
+				<!--Tipo Persona: Fisica/Giuridica-->
+				<element name="Nome" type="string" minOccurs="0" nillable="true"/>
+				<!--Nome-->
+				<element name="Cognome" type="string" minOccurs="0" nillable="true"/>
+				<!--Cognome-->
+				<element name="DataNascita" type="date" minOccurs="0" nillable="true"/>
+				<!--Data di Nascita-->
+				<element name="FormatoRisposta" type="vn:formatoRisposta"/>
+				<!--Formato della Risposta: xml-->
+				<element name="username" type="string" minOccurs="0" nillable="true"/>
+				<!--username per autenticazione sso-->
+				<element name="password" type="string" minOccurs="0" nillable="true"/>
+				<!--password per autenticazione sso-->
+				<element name="clientId" type="string" minOccurs="0" nillable="true"/>
+				<!--identificativo del cliente che effettua chiamata diretta-->
+				<element name="Mandato" type="string" minOccurs="0" nillable="true"/>
+				<element name="Assistito" type="string" minOccurs="0" nillable="true"/>
+				<element name="Avvocato" type="string" minOccurs="0" nillable="true"/>
+				<element name="Pagina" type="int" minOccurs="0" nillable="true"/>
+				<element name="RowIdDa" type="int" minOccurs="0" nillable="true"/>
+				<element name="RowIdA" type="int" minOccurs="0" nillable="true"/>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="DatiRisposta">
+		<!--Dati della Risposta-->
+		<complexType>
+			<sequence>
+				<element name="Esito" type="vn:esito"/>
+				<!--Esito della Consultazione: 0 Dati Recuperati - 1 Recuperati troppi Veicoli  - 2 Nessun Risultato  - 3 Errore -->
+				<element name="NumeroRecord" type="integer" minOccurs="0" nillable="true"/>
+				<!--Numero di veicoli recuperati-->
+				<element name="VeicoliNonGiuridici" type="vn:Flag" minOccurs="0" nillable="true"/>
+				<!--S esistono veicoli non giuridici per il nominativo, N altrimenti -->
+				<element name="ElencoVeicoli" minOccurs="0">
+					<!--Elenco Veicoli-->
+					<complexType>
+						<sequence>
+							<element name="Veicolo" type="vn:veicolo" minOccurs="0" nillable="true" maxOccurs="unbounded"/>
+							<!--Dati di un veicolo-->
+						</sequence>
+					</complexType>
+				</element>
+				<element name="Errore" type="vn:errore" minOccurs="0" nillable="true" maxOccurs="unbounded"/>
+			</sequence>
+		</complexType>
+	</element>
+	<complexType name="veicolo">
+		<sequence>
+			<element name="ProgressivoLista" type="integer"/>
+			<!--Progressivo del veicolo nella lista-->
+			<element name="ProvinciaCompetenza" type="string" minOccurs="0" nillable="true"/>
+			<!--PRA di competenza del veicolo-->
+			<element name="Targa" type="string"/>
+			<!--Targa-->
+			<element name="SerieTarga" type="string"/>
+			<!--SerieTarga-->
+			<element name="StatoVeicolo" type="string"/>
+			<!--" " (veicolo in circolazione da sempre con questa targa), Targa Attuale (veicolo in circolazione attualmente con questa targa, ma precedentemente con un'altra targa), Radiazione (veicolo non più in circolazione), Perdita Possesso(soggetto non più in possesso del veicolo)-->
+			<element name="Causale" type="string" minOccurs="0" nillable="true"/>
+			<!-- Causale della perdita di possesso o della radiazione -->
+			<element name="FlagGiuridico" type="vn:Flag" minOccurs="0" nillable="true"/>
+			<!--Flag che indica se il veicolo è giuridico o meno-->
+			<element name="DataPrimaImmatricolazione" type="date"/>
+			<element name="CodiceUltimaFormalita" type="integer"/>
+			<!--Codice dell' Ultima Formalità-->
+			<element name="DescrizioneUltimaFormalita" type="string"/>
+			<!--Descrizione dell' Ultima Formalità-->
+			<element name="DataUltimaFormalita" type="date"/>
+			<!--Data dell'Ultima Formalità-->
+			<element name="DatiTecnici" type="vn:datiTecnici"/>
+			<!--Dati Tecnici del veicolo-->
+			<element name="Soggetto" type="vn:soggetto"/>
+			<!--Dati del Soggetto-->
+			<element name="Vincoli" type="vn:vincoli" minOccurs="0"/>
+			<!--Vincoli del veicolo-->
+		</sequence>
+	</complexType>
+	<complexType name="datiTecnici">
+		<sequence>
+			<element name="Telaio" type="string" minOccurs="0" nillable="true"/>
+			<!--Numero Telaio-->
+			<element name="Fabbrica" type="string" minOccurs="0" nillable="true"/>
+			<!--Fabbrica-->
+			<element name="Tipo" type="string" minOccurs="0" nillable="true"/>
+			<!--Tipo-->
+			<element name="Serie" type="string" minOccurs="0" nillable="true"/>
+			<!--Serie-->
+			<element name="ClasseVeicolo" type="string" minOccurs="0" nillable="true"/>
+		</sequence>
+	</complexType>
+	<complexType name="soggetto">
+		<sequence>
+			<element name="Cognome" type="string"/>
+			<!--Cognome-->
+			<element name="Nome" type="string" nillable="true"/>
+			<!--Nome-->
+			<element name="DataNascita" type="date" minOccurs="0" nillable="true"/>
+			<!--Data di Nascita-->
+			<element name="ComuneNascita" type="string" minOccurs="0" nillable="true"/>
+			<!--Comune di Nascita Italiana-->
+			<element name="CodiceFiscale" type="string" minOccurs="0" nillable="true"/>
+			<element name="PartitaIva" type="string" minOccurs="0" nillable="true"/>
+			<element name="ProvinciaResidenza" type="string" minOccurs="0" nillable="true"/>
+			<!--Provincia di Residenza Italiana-->
+			<element name="LuogoNascitaEstera" type="string" minOccurs="0" nillable="true"/>
+			<!--Luogo di Nascita Estera-->
+			<element name="LuogoResidenzaEstera" type="string" minOccurs="0" nillable="true"/>
+			<!--Luogo di Residenza Estera-->
+			<element name="NazioneResidenzaEstera" type="string" minOccurs="0" nillable="true"/>
+			<!--Nazione di Residenza Estera-->
+			<element name="CodiceRuoloSoggetto" type="integer"/>
+			<!--Codice Identificativo del ruolo del Soggetto-->
+			<element name="DescrizioneRuoloSoggetto" type="string"/>
+			<!--Descrizione del ruolo del Soggetto-->
+			<element name="DataRiferimentoRuoloSoggetto" type="date"/>
+			<!--Data di Inizio Proprietà se il soggetto è Intestatario, data Scadenza se il soggetto è Locatario, Usufruttuario, Acquiente PRD  -->
+		</sequence>
+	</complexType>
+	<complexType name="vincoli">
+		<sequence>
+			<element name="Vincolo" type="vn:vincolo" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<complexType name="vincolo">
+		<sequence>
+			<element name="DescrizioneFormalita" type="string"/>
+			<!--Descrizione della Formalità che ha iscritto il Vincolo-->
+			<element name="CausaleProvvedimento" type="string"/>
+			<!--Causale del provvedimento che ha iscritto il vincolo-->
+		</sequence>
+	</complexType>
+	<simpleType name="tipoRichiesta">
+		<restriction base="string">
+			<enumeration value="Nominativo"/>
+			<enumeration value="CodiceFiscale"/>
+			<enumeration value="PartitaIva"/>
+			<!--Richiesta per Nominativo-->
+			<!--Richiesta per CodiceFiscale-->
+			<!--Richiesta per PartitaIVA-->
+		</restriction>
+	</simpleType>
+	<complexType name="esito">
+		<sequence>
+			<element name="CodiceEsito" type="vn:codiceEsito"/>
+			<element name="DescrizioneEsito" type="vn:descrizioneEsito"/>
+		</sequence>
+	</complexType>
+	<complexType name="errore">
+		<sequence>
+			<element name="CodiceErrore" type="string"/>
+			<element name="DescrizioneErrore" type="string"/>
+		</sequence>
+	</complexType>
+	<simpleType name="codiceEsito">
+		<restriction base="integer">
+			<pattern value="[0-4]"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="descrizioneEsito">
+		<restriction base="string">
+			<enumeration value="Dati Recuperati"/>
+			<enumeration value="Recuperati troppi Veicoli"/>
+			<enumeration value="Nessun Risultato"/>
+			<enumeration value="Errore"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="formatoRisposta">
+		<restriction base="string">
+			<enumeration value="XML"/>
+			<enumeration value="HTML"/>
+			<enumeration value="PDF"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="statoTarga">
+		<restriction base="string">
+			<enumeration value=" "/>
+			<enumeration value="Targa Attuale"/>
+			<enumeration value="Radiazione"/>
+			<enumeration value="Perdita Possesso"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="Flag">
+		<restriction base="string">
+			<pattern value="[S|N]"/>
+		</restriction>
+	</simpleType>
+</schema>

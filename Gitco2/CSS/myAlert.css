@@ -1,0 +1,61 @@
+/* The Modal (background) */
+.modalAlertCustom {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content-alert {
+    /*background-color: #B0FFCC*//*#fefefe*/
+    margin: auto;
+    padding: 5px 20px 20px 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 10px;
+    /*background-image: linear-gradient(to right, #C4FFC9 , #87DEA0);*/
+    /*#ADFFC5*/
+}
+
+/* The Close Button */
+.closeAlert {
+    color: #aaaaaa;
+    font-size: 28px;
+    font-weight: bold;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    /*background-color: #97E8A0;*/
+    margin-left: auto;
+    margin-right: 0;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 30px;
+    /*opacity: 0.8;*/
+}
+
+.closeAlert:hover,
+.closeAlert:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.containerCloseButton {
+    position: relative;
+    width: 100%;
+}
+
+.containerTextAlert{
+    /*color: #5B8F61;*/
+    font-weight: bold;
+    text-align: center;
+}

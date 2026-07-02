@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript">
+			google.load("visualization", "1", {packages:["linechart"]});
+			google.setOnLoadCallback(drawChart);
+			function drawChart()
+			{
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Temperaure');
+				data.addColumn('number', 'Jan');
+				data.addColumn('number', 'Feb');
+
+				data.addRows([
+					['4h', -5, 10],
+					['5h', 0,  11],
+					['6h', 7,  11],
+					['7h', 10, 12],
+					['8h', 10, 12],
+					['10h', 11, 13],
+					['11h', 12, 14],
+					['12h', 14, 15]
+				]);
+
+				var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+				chart.draw(data, {
+					width: 500,
+					height: 240,
+					legend: 'right',
+					title: 'Temperaure'
+				});
+			}
+		</script>
+	</head>
+
+	<body>
+		<div id="chart_div"></div>
+	</body>
+</html>

@@ -1,0 +1,41 @@
+; This file is maintained by HCW. Do not modify this file directly.
+; Created by HelpMaker 7.4.4.0
+
+[OPTIONS]
+HCW=0
+TITLE=Gitco_New
+CONTENTS=Iniziamo
+COPYRIGHT=Copyright © 2009 by ...
+REPORT=YES
+FTS=1
+COMPRESS=12 Hall Zeck
+LCID=0x409 0x6 0x00 English (United States)
+ERRORLOG=C:\PROGRA~2\EASYPH~1.1\www\html\Gitco2\help\gitco_new_tmphpj\gitco_new.log
+BMROOT=C:\PROGRA~2\EASYPH~1.1\www\html\Gitco2\help\GITCO_~1\
+
+HLP=C:\PROGRA~2\EASYPH~1.1\www\html\Gitco2\help\gitco_new_tmphpj\gitco_new.hlp
+CNT=C:\PROGRA~2\EASYPH~1.1\www\html\Gitco2\help\gitco_new_tmphpj\gitco_new.cnt
+
+[FILES]
+C:\PROGRA~2\EASYPH~1.1\www\html\Gitco2\help\gitco_new_tmphpj\gitco_new.rtf
+
+[WINDOWS]
+Main="Main",(,,,),19972,(255,252,234),(192,192,192),f3
+Popup="Popup",(,,,),19972,(255,252,234),(192,192,192),f3
+
+[MAP]
+Iniziamo = 30
+BenvenutoinGitco = 40
+Contattaci = 50
+SaridaSrl = 60
+DatiSoggetto = 90
+Annotazioni = 100
+Domicilio = 110
+Recapito = 120
+Dettagli = 130
+CambioResidenza = 140
+FAQ = 150
+
+
+[OPTIONS]
+DEFFONT=Arial,12,0

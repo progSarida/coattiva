@@ -1,0 +1,922 @@
+<div class="row">
+{% set arrPath = pignoramento | get_pdf_path %}
+<div class="col-sm-6">
+  <div class="row">
+      <div class="col-sm-8" >
+        <label class="control-label resize " style="font-weight: bold; color: blue;" >File Pignoramento</label>
+      </div>
+      <div class="col-sm-4">
+        <img style="cursor: pointer;width: 25px;" src="{{PATHS.IMMAGINIWEB}}/pdf_icon_3.webp" onclick="showFileOnModal('{{arrPath.PathCompleto}}','File Pignoramento');" />
+      </div>
+  </div>
+</div>
+<div class="col-sm-6">
+  <div class="row">
+      <div class="col-sm-8" >
+        <label class="control-label resize " style="font-weight: bold; color: blue;" >File Relata Pignoramento</label>
+      </div>
+      <div class="col-sm-4">
+        <img style="cursor: pointer;width: 25px;" src="{{PATHS.IMMAGINIWEB}}/pdf_icon_3.webp" onclick="showFileOnModal('{{arrPath.PathCompleto_Relata}}','File Relata Pignoramento');" />
+      </div>
+  </div>
+</div>
+
+</div>
+
+<div class="row">
+  <div class="col-sm-6">
+      <div class="row">
+          <div class="col-sm-4" >
+            <label class="control-label resize " >Importo atto</label>
+          </div>
+          <div class="col-sm-3 text-right">
+            <b>{{pignoramento.Importo_Atto|number_format(2, ',', '')}} &euro;</b>
+          </div>
+          <div class="col-sm-2" >
+            +
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-sm-4 text-left" >
+            <label class="control-label resize " >Interessi</label>
+          </div>
+          <div class="col-sm-3 text-right">
+            <b>{{pignoramento.Interessi|number_format(2, ',', '')}} &euro;</b>
+          </div>
+          <div class="col-sm-2" >
+            =
+          </div>
+      </div>
+      <div class="row" style="border-top:1px solid black">
+          <div class="col-sm-4" >
+            <label class="control-label resize " style="color: #294A9C">Importo dovuto</label>
+          </div>
+          <div class="col-sm-3 text-right">
+            <b>{{pignoramento.Importo_Dovuto|number_format(2, ',', '')}} &euro;</b>
+          </div>
+          <div class="col-sm-2" >
+            +
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-sm-4" >
+            <label class="control-label resize " >Spese Not. Debitore</label>
+          </div>
+          <div class="col-sm-3 text-right">
+            <b>{{pignoramento.Spese_Notifica_Debitore|number_format(2, ',', '')}} &euro;</b>
+          </div>
+          <div class="col-sm-2" >
+            +
+          </div>
+      </div>
+      <div class="row" >
+          <div class="col-sm-4" >
+            <label class="control-label resize " >Spese Not. Terzi</label>
+          </div>
+          <div class="col-sm-3 text-right">
+            <b>{{pignoramento.Spese_Notifica_Terzi|number_format(2, ',', '')}} &euro;</b>
+          </div>
+          <div class="col-sm-2" >
+            =
+          </div>
+      </div>
+      <div class="row" style="border-top:1px solid black">
+          <div class="col-sm-4" >
+            <label class="control-label resize " style="color: #294A9C">Totale Parziale</label>
+          </div>
+          <div class="col-sm-3 text-right">
+            <b>{{(pignoramento.Totale_Spese_Notifica+pignoramento.Importo_Dovuto)|number_format(2, ',', '')}} &euro;</b>
+          </div>
+          <div class="col-sm-2" >
+            
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-sm-4" >
+            <label class="control-label resize " style="color: red">Totale 1</label>
+            
+          </div>
+          <div class="col-sm-3 text-right">
+            <b>{{(pignoramento.Totale_1)|number_format(2, ',', '')}} &euro;</b>
+          </div>
+          <div class="col-sm-5" style="color: red">
+            <i>+ {{pignoramento.Totali_SA.1|number_format(2, ',', '')}} &euro; Spese acc.  (1)</i>
+          </div>
+      </div>
+      <div class="row" style="{% if pignoramento.ShowTotale2 == 0 %}display: none;{% endif %}">
+          <div class="col-sm-4" >
+            <label class="control-label resize " style="color: red">Totale 2</label>
+          </div>
+          <div class="col-sm-3 text-right">
+            <b>{{(pignoramento.Totale_2)|number_format(2, ',', '')}} &euro;</b>
+          </div>
+          <div class="col-sm-5" style="color: red">
+            <i>+ {{pignoramento.Totali_SA.2|number_format(2, ',', '')}} &euro; Spese acc. (1+2)</i>
+          </div>
+      </div>
+      <div class="row" style="{% if pignoramento.ShowTotale3 == 0 %}display: none;{% endif %}">
+          <div class="col-sm-4" >
+            <label class="control-label resize " style="color: red">Totale 3</label>
+          </div>
+          <div class="col-sm-3 text-right">
+            <b>{{(pignoramento.Totale_3)|number_format(2, ',', '')}} &euro;</b>
+          </div>
+          <div class="col-sm-5" style="color: red">
+            <i>+ {{pignoramento.Totali_SA.3|number_format(2, ',', '')}} &euro; Spese acc. (1+2+3)</i>
+          </div>
+      </div>
+  </div>
+
+
+  <div class="col-sm-6">
+
+    <div class="row" style="margin-bottom:2rem">
+      <div class="col-sm-3">
+        <label for="Stato_Pignoramento" style="text-align: left;">Stato</label>
+      </div>
+      <div class="col-sm-3">
+        <select id="Stato_Pignoramento" name="Stato_Pignoramento" style="width: 12rem">
+              <option></option>
+              <option>Archiviato</option>
+              <option>Annullato</option>
+            </select>
+      </div>
+      <div class="col-sm-3">
+        <label for="DataStatoPignoramento" style="text-align: left;">Data inserimento</label>
+      </div>
+      <div class="col-sm-3">
+        <input class="text_center picker" name="Data_Stato_Pignoramento" type="text"
+        style="width: 11rem" value="{{ pignoramento.Data_Stato_Pignoramento is empty ? "":pignoramento.Data_Stato_Pignoramento|date('d/m/Y') }}">
+      </div>
+    
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+          <label class="control-label ">Totale da rateizzare</label>    
+        </div>
+        <div class="col-sm-3">
+          <select name="Tipo_Totale_Rate" style="width: 12rem" disabled>
+            {{pignoramento.optTipoTotaleRate|raw}}
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <label class="control-label resize" >Data richiesta</label>
+        </div>
+        <div class="col-sm-3">
+          <input id=data_richiesta class="text_center picker" name="Data_Richiesta_Rate" type=text style="width: 11rem" disabled
+          value='{{ pignoramento.Data_Richiesta_Rate is empty ? "":pignoramento.Data_Richiesta_Rate|date('d/m/Y') }}' onchange="change_data_rate();">
+        </div>
+        <div class="col-sm-3" style="text-align: center;">
+          <label class="control-label resize" >Numero rate</label>
+        </div>
+        <div class="col-sm-3">
+          <input class="text_right sfondo_azzurro" disabled type="text" style="width: 8rem"
+              id="Rate_Previste" name="Rate_Previste" value="{{ pignoramento.Rate_Previste == 0 ? "":pignoramento.Rate_Previste }}" onchange="change_num_rate();">
+        </div>
+      </div>
+      <div class="row" style="margin-top:1rem">
+        <div class="col-sm-6">
+          <input type=button value="Gestione rateizzazione" id="Importi_Rate" class="btn btn-primary resize" onclick="$('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b>');$('#installmentModal').modal('show');">
+        </div>
+      </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="installmentModal" tabindex="-1" aria-labelledby="installmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 65% !important;height: 85vh !important;">
+        <div class="modal-content" style="">
+            <div class="modal-header">
+                <h5 class="modal-title" id="installmentModalLabel" style="color: blue;"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position: relative !important;bottom: 2.5vh !important;">
+                    <span aria-hidden="true" ><i class="fa fa-times" aria-hidden="true"></i></span>
+                </button>
+            </div>
+            <div class="modal-body" style="height: 72vh !important;">
+              <div style="overflow-x:hidden;overflow-y: auto;max-height:70vh;">
+                  <form id="installmentForm">
+
+                    <input type="hidden" id="number_sel" name="number_sel" value="{{pignoramento.Rate_Previste is empty ? 0 : pignoramento.Rate_Previste}}">
+                    <input type="hidden" name="Pigno_ID" value="{{pignoramento.ID}}">
+
+                    <div class="row">
+                      <div class="col col-lg-4">
+                          <div class="form-group">
+                              <label class="col-lg-4 control-label title">Tot. da rateiz.</label>
+                              <div class="col-lg-8">
+                                  <select class="form-control vld_req" name=total_type id=total_type>
+                                  <option value="0" class="title">Seleziona...</option>
+                                  <option value="1" {% if pignoramento.Tipo_Totale_Rate == 1 %} selected {% endif %} total="{{(pignoramento.Totale_1)|number_format(2, '.', '')}}">Totale 1 - {{(pignoramento.Totale_1)|number_format(2, ',', '')}} &euro;</option>
+                                  <option value="2" {% if pignoramento.Tipo_Totale_Rate == 2 %} selected {% endif %} total="{{(pignoramento.Totale_2)|number_format(2, '.', '')}}" style="{% if pignoramento.ShowTotale2 == 0 %}display: none;{% endif %}">Totale 2 - {{(pignoramento.Totale_2)|number_format(2, ',', '')}} &euro;</option>
+                                  <option value="3" {% if pignoramento.Tipo_Totale_Rate == 3 %} selected {% endif %} total="{{(pignoramento.Totale_3)|number_format(2, '.', '')}}" style="{% if pignoramento.ShowTotale3 == 0 %}display: none;{% endif %}">Totale 3 - {{(pignoramento.Totale_3)|number_format(2, ',', '')}} &euro;</option>
+                                </select>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col col-lg-4">
+                          <div class="form-group">
+                              <label class="col-lg-4 control-label title">Data richiesta</label>
+                              <div class="col-lg-8">
+                                  <input class="form-control vld_req" type="date" name=request_date id=request_date value="{{pignoramento.Data_Richiesta_Rate is empty?"now"|date("Y-m-d"):pignoramento.Data_Richiesta_Rate}}">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col col-lg-3">
+                          <div class="form-group">
+                              <label class="col-lg-4 control-label title">N° rate</label>
+                              <div class="col-lg-8">
+                                  <input class="form-control vld_req" type="number" name="number" id="number" value="{{pignoramento.Rate_Previste is empty?0:pignoramento.Rate_Previste}}">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col col-lg-1">
+                          <button class="btn btn-primary" type="button" onclick="creaRate($('option:selected','#total_type'),$('#number'),$('#request_date'),$('#installment_type'));">Crea</button>
+                      </div>
+                    </div>
+
+                    <div style="border-top: 2px solid #244EE3; width: 100%;margin-bottom: 1%;margin-top: 1%;"></div>
+
+                    <div class="row hideInit">
+                      <div class="col col-lg-4 col-lg-offset-4">
+                          <div class="form-group">
+                              <label class="col-lg-4 control-label title">Tipo scadenza</label>
+                              <div class="col-lg-8">
+                                  <select class="form-control vld_req" name="installment_type" id="installment_type" onchange="resetDate(this);">
+                                  {{pignoramento.optTipoScadRate|raw}}
+                                </select>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="hideInit" style="border-top: 2px solid #244EE3; width: 100%; margin-bottom: 1%;margin-top: 1%;"></div>
+
+                    <div id="container-rate">
+                    
+                    {% set arrayImporti = pignoramento.Importi_Rate | explode %}
+                    {% set arrayDate = pignoramento.Scadenze_Rate | explode %}
+
+                    {% set totale = 0 %}
+
+                    {% for value in arrayImporti %}
+
+                      {% set totale = totale + value %}
+
+                      {% if loop.first %}
+
+                      <table class="table table-sm table-hover">
+                        <colgroup>
+                          <col style="width:10%;">
+                          <col style="width:40%;">
+                          <col style="width:50%;">
+                        </colgroup>
+                        <thead class="bg-primary">
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Importo &euro; - Su un totale di {% if pignoramento.Tipo_Totale_Rate == 1 %} {{(pignoramento.Totale_1)|number_format(2, '.', '')}} {% elseif pignoramento.Tipo_Totale_Rate == 2 %} {{(pignoramento.Totale_2)|number_format(2, '.', '')}} {% else %} {{(pignoramento.Totale_3)|number_format(2, '.', '')}} {% endif %}</th>
+                            <th scope="col">Data scadenza</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                        {% endif %}
+
+                        <tr>
+                          <th scope="row" style="color:#244EE3;">{{loop.index}}°</th>
+                          <td><input class="form-control form-control-sm split_import" type="text" onchange="set_total('sumTotal');" id="split_import_{{loop.index}}" name="split_import[]" value="{{value | numberPoint}}"/></td>
+                          <td><input class="form-control form-control-sm" type="date" {% if loop.index0 > 0 %} readonly {% else %} onblur="resetDate(document.getElementById('installment_type'));" {% endif %} id="split_date_{{loop.index}}" name="split_date[]" value="{{arrayDate[loop.index0] | dateDb}}"/></td>
+                        </tr>
+
+                        {% if loop.last %}
+
+                              <tr>
+                                <th scope="row" style="color:green;font-weight:bold;">Totale:</th>
+                                <td colspan="2" style="color:green;font-weight:bold;text-align:left;" id="sumTotal">{{totale}}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+
+                        {% endif %}
+
+                    {% endfor %}
+                    
+                    </div>
+
+                    <div class="hideInit" style="border-top: 2px solid #244EE3; width: 100%; margin-bottom: 1%;margin-top: 1%;"></div>
+
+                    <div class="row hideInit">
+                      <div class="col col-lg-3 title">Incaricato rateizzazione</div>
+                      <div class="col col-lg-5">
+                          <div class="form-group">
+                              <label class="col-lg-4 control-label">Nominativo</label>
+                              <div class="col-lg-8">
+                                  <input class="form-control vld_req" type="text" name="nominative" id="nominative" value="{{pignoramento.Nominativo_Gestore_Rateizzazione is empty?"":pignoramento.Nominativo_Gestore_Rateizzazione}}">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col col-lg-4">
+                          <div class="form-group">
+                              <label class="col-lg-4 control-label">Posizione</label>
+                              <div class="col-lg-8">
+                                  <input class="form-control vld_req" type="text" name="position" id="position" value="{{pignoramento.Posizione_Gestore_Rateizzazione is empty?"":pignoramento.Posizione_Gestore_Rateizzazione}}">
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="row hideInit" style="margin-top: 1%;">
+                      <div class="col col-lg-3 title">Esito richiesta</div>
+                      <div class="col col-lg-5">
+                        <div class="form-check form-check-inline" style="display:inline;text-align:left;">
+                          <input class="form-check-input col-lg-2" type="radio" value="1" name="request_outcome" id="accolta" {% if pignoramento.Esito_Richiesta_Rateizzazione is empty or pignoramento.Esito_Richiesta_Rateizzazione == "accolta" %} checked {% endif %}>
+                          <label class="form-check-label col-lg-4" for="accolta">
+                            Accolta
+                          </label>
+                        </div>
+                        <div class="form-check form-check-inline" style="display:inline;text-align:left;">
+                          <input class="form-check-input col-lg-2" type="radio" value="2" name="request_outcome" id="respinta" {% if pignoramento.Esito_Richiesta_Rateizzazione == "respinta" %} checked {% endif %}>
+                          <label class="form-check-label col-lg-4" for="respinta">
+                            Respinta
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row hideInit" style="margin-top: 1%;">
+                      <div class="col col-lg-3 title">Motivazione</div>
+                      <div class="col col-lg-9">
+                          <div class="form-group">
+                              <div class="col-lg-12">
+                                  <textarea class="form-control vld_req" style="max-width: 100%;" type="text" name="motivation" id="motivation" value="">{% if pignoramento.Motivazione_Respinta_Rateizzazione is not empty %}  {{pignoramento.Motivazione_Respinta_Rateizzazione}} {% endif %}</textarea>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="row hideInit" style="margin-top: 1%;">
+                      <div class="col col-lg-4 title">Soggetto che ha evaso la pratica di rateizzazione</div>
+                      <div class="col col-lg-8">
+                          <div class="form-group">
+                              <div class="col-lg-12">
+                                  <input class="form-control vld_req" type="text" name="operator" id="operator" value="{{pignoramento.Operatore_Rateizzazione is empty?"":pignoramento.Operatore_Rateizzazione}}">
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="hideInit" style="border-top: 2px solid #244EE3; width: 100%; margin-bottom: 1%;margin-top: 1%;"></div>
+
+                  </form>
+
+                  <div class="row hideInit" style="margin-top: 1%;">
+                      <div class="col col-lg-3 title" style="text-align:center;">Selezione di stampa</div>
+                      <div class="col col-lg-3 title" style="text-align:center;">Richiesta rateizzazione</div>
+                      <div class="col col-lg-3 title" style="text-align:center;">Esito rateizzazione</div>
+                      <div class="col col-lg-3 title" style="text-align:center;">Stampa bollettini</div>
+                    </div>
+                    <div class="row hideInit" style="margin-top: 1%;">
+                      <div class="col col-lg-3 title" style="text-align:center;">
+                        <div class="form-group">
+                            <div class="col-lg-12">
+                                <select class="form-control vld_req" name="print_type" id="print_type">
+                                <option value="temp">Provvisoria</option>
+                                <option value="final">Definitiva</option>
+                              </select>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="col col-lg-3 title" style="text-align:center;"><img style="width: 30px; cursor: pointer;" src="{{PATHS.IMMAGINIWEB}}/pdf_icon_3.webp" onclick="stampa_richiesta('{{pignoramento.ID}}');" /></div>
+                      <div class="col col-lg-3 title" style="text-align:center;"><img style="width: 30px; cursor: pointer;" src="{{PATHS.IMMAGINIWEB}}/pdf_icon_3.webp" onclick="stampa_esito('{{pignoramento.ID}}');"  /></div>
+                      <div class="col col-lg-3 title" style="text-align:center;"><img style="width: 40px; cursor: pointer;" src="{{PATHS.IMMAGINIWEB}}/icon_bollettino_postale.png" onclick="stampa_bollettini('{{pignoramento.ID}}');" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button style="width: 100%;" class="btn btn-primary" type="button" id="btnSave" onclick="saveForm('aggiorna');">Salva</button>
+              <div class="row" id="btnSaveDel">
+                <div class="col col-lg-6"><button style="width: 100%;" class="btn btn-primary" type="button" id="btnSave" onclick="saveForm('aggiorna');">Aggiorna</button></div>
+                <div class="col col-lg-6"><button style="width: 100%;" class="btn btn-danger" type="button" id="btnSave" onclick="saveForm('elimina');">Elimina</button></div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--//* LOADER -->
+<div class="back_spiners" id="caricamento_spiners">
+    <div class="d-flex align-items-center text-info" style="width: 220px;position: fixed;top:45%;left:45%;text-align: center;">
+        <div style="display: inline;"><img style="width: 100%; border-radius: 100px;opacity: 0.5;" src="{{PATHS.GIFWEB}}/loading_3.gif"></div>
+        <div id="text_spiners" style="display: inline;font-size: 18px;width:100%;text-align: center;font-weight: bold;">Loading...</div>
+    </div>
+</div>
+  
+<style>
+ .title{
+  font-weight: bold;
+  color: #244EE3;
+ }
+
+ .back_spiners {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        background: rgba(0,0,0,0.80);
+        z-index: 100000000000;
+    }
+</style>
+
+<script type="text/javascript">
+
+  var nome_file_richiesta_rat = null;
+  var nome_file_esito_rat = null;
+  var nome_file_bollettini_rat = null;
+  var total_choice = "{% if pignoramento.Tipo_Totale_Rate == 1 %} {{(pignoramento.Totale_1)|number_format(2, '.', '')}} {% elseif pignoramento.Tipo_Totale_Rate == 2 %} {{(pignoramento.Totale_2)|number_format(2, '.', '')}} {% else %} {{(pignoramento.Totale_3)|number_format(2, '.', '')}} {% endif %}";
+  var flagSave = true;
+  var flagPrint = "{{pignoramento.Rate_Previste}}" == "" ? false : true;
+
+
+  $(document).ready(function(){
+    
+//alert(total_choice);
+
+    if("{{pignoramento.Data_Richiesta_Rate}}" == "")
+      $(".hideInit").hide();
+
+    if("{{pignoramento.Rate_Previste}}" == ""){
+      $("#btnSave").show();
+      $("#btnSaveDel").hide();
+    }
+    else{
+      $("#btnSave").hide();
+      $("#btnSaveDel").show();
+    }
+    
+    if("{{pignoramento.Tipo_Scadenza_Rate_ID}}" != "")
+      $("#installment_type").val("{{pignoramento.Tipo_Scadenza_Rate_ID}}");
+
+    if($("#accolta").is(":checked"))
+      $("#motivation").prop("readonly",true);
+    else
+      $("#motivation").prop("readonly",false);
+
+    $("[name=request_outcome]").on("change",function(){
+      switch($(this).val()){
+        case "1": $("#motivation").prop("readonly",true); break;
+        case "2": $("#motivation").prop("readonly",false); break;
+        default: break;
+      }
+    });
+    //console.log({{ arrayImporti | json_encode | raw }});
+  });
+
+
+function startSpiner(){
+    $("#caricamento_spiners").show();
+}
+
+function closeSpiner(){
+    $("#caricamento_spiners").hide();
+}
+
+function stampa_bollettini(value)
+{
+
+  if(nome_file_bollettini_rat!=null)
+  {
+    var path = "{{PATHS.SUPER_WEB_ROOT ~ '/archivio/pignoramenti/' ~ pignoramento.CC ~ '/Documenti/'}}"+nome_file_bollettini_rat;
+    showFileOnModal(path,"Stampa Richiesta");
+		return true;
+  }
+
+  if("{{pignoramento.File_Bollettini}}"!="")
+  {
+    var path = "{{PATHS.SUPER_WEB_ROOT ~ '/archivio/pignoramenti/' ~ pignoramento.CC ~ '/Documenti/' ~ pignoramento.File_Bollettini}}";
+    showFileOnModal(path,"Stampa Richiesta");
+		return true;
+  }
+
+  if(!flagPrint){
+    showMessage(2, "Salvare i dati prima di procedere alla stampa!");
+    return false;
+  }
+
+
+  var nominativo = $('#nominative').val();
+  var posizione = $('#position').val();
+  var operatore = $('#operator').val();
+
+  if(nominativo == "" || posizione == "" || operatore == "")
+  {
+    showMessage(2, "Campi nominativo, posizione o operatore mancanti! Completare i dati per stampare l'esito");
+    return false;
+  }
+
+  startSpiner();
+
+  $.ajax({
+      url: "{{PATHS.WEB_ROOT}}/search/coattiva/stampa_bollettini.php",                                  // url pagina che farà query
+      type: "POST",                                                   // create an ajax request to display.php
+      dataType: "json",                                               // expect json to be returned
+      data: {
+        c: "{{pignoramento.CC}}",
+        ID_Pigno: value,
+        tipo_stampa: $("#print_type").val()=="temp"?"PROVVISORIA":"DEFINITIVA",
+        mode: "ajax_pigno"
+      },
+      success: function(response){
+        showMessage(response.error, response.msg);
+        if(response.error == 0){
+          var path = "";
+          if(response.type == "final"){
+            nome_file_bollettini_rat = response.file_name;
+            path = "{{PATHS.SUPER_WEB_ROOT ~ '/archivio/pignoramenti/' ~ pignoramento.CC ~ '/Documenti/'}}"+response.file_name;
+          }  
+          else
+            path = response.file;
+          
+          closeSpiner();
+
+          showFileOnModal(path,"Stampa richiesta rateizzazione");
+          
+        }
+      },
+      error: function(risposta,ao,thrownError){
+        closeSpiner();
+        showMessage(1, risposta.statusText);
+      }
+  });
+
+}
+
+function stampa_richiesta(value)
+{
+
+	if(nome_file_richiesta_rat!=null)
+	{
+    var path = "{{PATHS.SUPER_WEB_ROOT ~ '/archivio/pignoramenti/' ~ pignoramento.CC ~ '/Documenti/'}}"+nome_file_richiesta_rat;
+    showFileOnModal(path,"Stampa Richiesta");
+		return true;
+	}
+
+  if("{{pignoramento.File_Richiesta}}"!="")
+	{
+    var path = "{{PATHS.SUPER_WEB_ROOT ~ '/archivio/pignoramenti/' ~ pignoramento.CC ~ '/Documenti/' ~ pignoramento.File_Richiesta}}";
+    showFileOnModal(path,"Stampa Richiesta");
+		return true;
+	}
+
+  if(!flagPrint){
+    showMessage(2, "Salvare i dati prima di procedere alla stampa!");
+    return false;
+  }
+
+  startSpiner();
+
+  $.ajax({
+      url: "{{PATHS.WEB_ROOT}}/search/coattiva/richiesta_rateizzazione.php",//"{{pignoramento.WEB_ROOT}}/coattiva/ajax/printPignoRequest.php",                                  // url pagina che farà query
+      type: "POST",                                                   // create an ajax request to display.php
+      dataType: "json",                                               // expect json to be returned
+      data: {
+        c: "{{pignoramento.CC}}",
+        ID_Pigno: value,
+        tipo_stampa: $("#print_type").val()=="temp"?"PROVVISORIA":"DEFINITIVA",
+        mode: "ajax_pigno"
+      },
+      success: function(response){
+        showMessage(response.error, response.msg);
+        if(response.error == 0){
+          var path = "";
+          if(response.type == "final"){
+            nome_file_richiesta_rat = response.file_name;
+            path = "{{PATHS.SUPER_WEB_ROOT ~ '/archivio/pignoramenti/' ~ pignoramento.CC ~ '/Documenti/'}}"+response.file_name;
+          }
+          else
+            path = response.file;
+
+          closeSpiner();
+
+          showFileOnModal(path,"Stampa richiesta rateizzazione");
+          
+        }
+      },
+      error: function(risposta){
+        closeSpiner();
+        showMessage(1, risposta.statusText);
+      }
+  });
+                                           
+	//link = "<?= WEB_ROOT; ?>/search/coattiva/richiesta_rateizzazione.php?c=<?php echo $c; ?>&a=<?php echo $a; ?>&ID_Atto="+value+"&tipo_stampa="+tipo_stampa;
+
+
+	//window.open(link,"Stampa_Richiesta");
+    //self.close();
+
+}
+
+function stampa_esito(value)
+{
+
+  if(nome_file_esito_rat!=null)
+	{
+		//alert('File definitivo presente in archivio.');
+    var path = "{{PATHS.SUPER_WEB_ROOT ~ '/archivio/pignoramenti/' ~ pignoramento.CC ~ '/Documenti/'}}"+nome_file_esito_rat;
+    showFileOnModal(path,"Stampa esito");
+		return true;
+	}
+  if("{{pignoramento.File_Esito}}"!="")
+	{
+		//alert('File definitivo presente in archivio.');
+    var path = "{{PATHS.SUPER_WEB_ROOT ~ '/archivio/pignoramenti/' ~ pignoramento.CC ~ '/Documenti/' ~ pignoramento.File_Esito}}";
+    showFileOnModal(path,"Stampa esito");
+		return true;
+	}
+
+  if(!flagPrint){
+    showMessage(2, "Salvare i dati prima di procedere alla stampa!");
+    return false;
+  }
+
+	var nominativo = $('#nominative').val();
+	var posizione = $('#position').val();
+  var operatore = $('#operator').val();
+
+	if(nominativo == "" || posizione == "" || operatore == "")
+	{
+		showMessage(2, "Campi nominativo, posizione o operatore mancanti! Completare i dati per stampare l'esito");
+		return false;
+	}
+
+  startSpiner();
+
+  $.ajax({
+      url: "{{PATHS.WEB_ROOT}}/search/coattiva/esito_rateizzazione.php",                                  // url pagina che farà query
+      type: "POST",                                                   // create an ajax request to display.php
+      dataType: "json",                                               // expect json to be returned
+      data: {
+        c: "{{pignoramento.CC}}",
+        ID_Pigno: value,
+        tipo_stampa: $("#print_type").val()=="temp"?"PROVVISORIA":"DEFINITIVA",
+        mode: "ajax_pigno"
+      },
+      success: function(response){
+        showMessage(response.error, response.msg);
+        if(response.error == 0){
+          var path = "";
+          if(response.type == "final"){
+            nome_file_esito_rat = response.file_name;
+            path = "{{PATHS.SUPER_WEB_ROOT ~ '/archivio/pignoramenti/' ~ pignoramento.CC ~ '/Documenti/'}}"+response.file_name;
+          }
+          else
+            path = response.file;
+
+          closeSpiner();
+          showFileOnModal(path,"Stampa richiesta rateizzazione");
+          
+        }
+      },
+      error: function(risposta,ao,thrownError){
+        closeSpiner();
+        showMessage(1, risposta.statusText);
+      }
+  });
+	//link = "<?= WEB_ROOT; ?>/search/coattiva/esito_rateizzazione.php?c=<?php echo $c; ?>&a=<?php echo $a; ?>&ID_Atto="+value+"&tipo_stampa="+tipo_stampa;
+
+
+	//window.open(link,"Stampa_Esito");
+    //self.close();
+}
+
+  function saveForm(type){
+    
+    //var data = $("#installmentForm").serializeArray(); // convert form to array
+    //data.push({name: "save_type", value: type});
+    //$.param(data)
+
+    if(!flagSave)
+    {
+      showMessage(2, "I totali non corrispondono! Impossibile salvare!");
+      return false;
+    }
+
+
+    $.ajax({
+      url: "{{PATHS.WEB_ROOT}}/coattiva/ajax/saveInstallment.php",                                  // url pagina che farà query
+      type: "POST",                                                   // create an ajax request to display.php
+      dataType: "json",                                               // expect json to be returned
+      data: $("#installmentForm").serialize()+"&save_type="+type,
+      success: function(response){
+        showMessage(response.error, response.msg);
+        if(response.action == "elimina" && (response.error === "0" || response.error === 0))
+        {
+          location.reload();
+          flagPrint = false;
+        }
+        else if(response.action == "aggiorna" && (response.error === "0" || response.error === 0)){
+          $("#btnSave").hide();
+          $("#btnSaveDel").show();
+          flagPrint = true;
+        }
+      },
+      error: function(risposta){
+        showMessage(1, risposta.statusText);
+      }
+  });
+  }
+
+  function resetDate(el){
+
+    var tot_rate = parseInt($("#number_sel").val());
+
+    for(var i=2; i <= tot_rate; i++){
+            var data_prec = $('#split_date_'+(i-1)).val().split("-");
+            var year= parseInt(data_prec[0]);
+            var month = parseInt(data_prec[1]);
+            var day = parseInt(data_prec[2]);
+            var data = new Date(year,(month-1),day);
+        //alert(data);
+
+            switch(el.value){
+                case "1": var data_update  = new Date(data.getFullYear(),(data.getMonth()+1),data.getDate());// data.setMonth(data.getMonth()+1);
+                            //alert(data_update);
+                        $("#split_date_"+i).val(formatDateDB(data_update));
+                    break;
+                case "2": var data_update  = new Date(data.getFullYear(),(data.getMonth()+2),data.getDate());//data.setMonth(data.getMonth()+2);
+                            //alert(data_update);
+                        $("#split_date_"+i).val(formatDateDB(data_update));
+                    break;
+                case "3": var data_update  = new Date(data.getFullYear(),(data.getMonth()+6),data.getDate());//data.setMonth(data.getMonth()+6);
+                            //alert(data_update);
+                        $("#split_date_"+i).val(formatDateDB(data_update));
+                    break;
+                default: break;
+            }
+    }
+}
+
+
+  function creaRate(value,number,date,cadenza_rate){
+
+    var total_var = value.attr("total");
+    var number_var = number.val();
+    var date_var = date.val();
+
+    if(value.val() == "0"){
+      //$('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b> - <b style="color:red !important;">Errore! Prima selezionare un importo!</b>');
+      showMessage(1,"Errore! Prima selezionare un importo!");
+      return false;
+    }
+    if(date_var == ""){
+      //$('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b> - <b style="color:red !important;">Errore! Prima inserire la data della rateizzazione!</b>');
+      showMessage(1,"Errore! Prima inserire la data della rateizzazione!");
+      return false;
+    }
+    if(number_var < 2)
+    {
+      //$('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b> - <b style="color:red !important;">Errore! Creare almeno due rate!</b>');
+      showMessage(1,"Errore! Creare almeno due rate!");
+      return false;
+    }
+
+    var impUnaRata = (parseFloat(total_var) / number_var).toFixed(2);
+    var restUnaRata = parseFloat(total_var) - (impUnaRata * number_var).toFixed(2);
+
+    var html = createInstallmentTable(impUnaRata,restUnaRata,date_var,number_var,total_var,cadenza_rate.val());
+
+    total_choice = total_var;
+
+    $(".hideInit").show();
+    $('#container-rate').empty().append(html);
+
+    $("#number_sel").val(number_var);
+
+    //$('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b> - <b style="color:green !important;">Rate create!</b>');
+    showMessage(0,"Rate create!");
+
+  }
+
+  async function showMessage(type,msg){
+    
+    switch(type){
+      case "0":
+      case 0: $('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b> - <b style="color:green !important;">'+msg+'</b>'); break;
+      case "1":
+      case 1: $('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b> - <b style="color:red !important;">'+msg+'</b>'); break;
+      case "2":
+      case 2: $('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b> - <b style="color:#F6BE00 !important;">'+msg+'</b>'); break;
+      default: $('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b> - <b>'+msg+'</b>'); break;
+    }
+
+    setTimeout(reset, 10000);
+
+  }
+
+  function reset(){
+    $('#installmentModalLabel').empty().append('<b>Rateizzazione pignoramenti</b>');
+  }
+
+  function createInstallmentTable(importo,resto,data,number,totale,cadenza){
+
+    var arrData = data.split("-");
+    var Data = new Date(arrData[0],arrData[1]-1,arrData[2]);
+    Data.setDate(Data.getDate()+10);
+
+    var str = `<table class="table table-sm table-hover">
+                  <colgroup>
+                    <col style="width:10%;">
+                    <col style="width:40%;">
+                    <col style="width:50%;">
+                  </colgroup>
+                  <thead class="bg-primary">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Importo &euro; - Su un totale di `+totale+`</th>
+                      <th scope="col">Data scadenza</th>
+                    </tr>
+                  </thead>
+                  <tbody>`;
+
+    var dateIta = null;
+    var importo_def = 0;
+    var disabled = "";
+    var onblurDate = "";
+    var totale_rate = 0;
+    for(var i = 0; i < number; i++){
+        
+        importo_def = i==0?(parseFloat(importo)+parseFloat(resto)).toFixed(2):parseFloat(importo).toFixed(2);
+        if(i>0) {
+          disabled = "readonly";
+          onblurDate = "";
+        }
+        else{ 
+          disabled = "";
+          onblurDate = "resetDate(document.getElementById('installment_type'));";
+        }
+
+        totale_rate+=parseFloat(importo_def);
+
+        str += `<tr>
+                <th scope="row" style="color:#244EE3;">`+(i+1)+`°</th>
+                <td><input class="form-control form-control-sm split_import" type="text" onchange="set_total('sumTotal');" id="split_import_`+(i+1)+`" name="split_import[]" value="`+importo_def+`"/></td>
+                <td><input class="form-control form-control-sm" type="date" `+disabled+` onblur="`+onblurDate+`" id="split_date_`+(i+1)+`" name="split_date[]" value="`+formatDateDB(Data)+`"/></td>
+              </tr>`;
+
+        switch(cadenza){
+          case "1": Data.setMonth(Data.getMonth()+1); break;
+          case "2": Data.setMonth(Data.getMonth()+2); break;
+          case "3": Data.setMonth(Data.getMonth()+6); break;
+          default: Data.setMonth(Data.getMonth()+1); break;
+        }
+        
+    }
+
+    str += `  <tr>
+                <th scope="row" style="color:green;font-weight:bold;">Totale:</th>
+                <td colspan="2" style="text-align:left;" id="sumTotal"><b style="color:green;">`+parseFloat(totale_rate).toFixed(2)+`</b></td>
+              </tr>
+            </tbody>
+          </table>`; 
+
+    return str;
+
+  }
+
+  function set_total(id){
+    var newTotal = 0;
+    $(".split_import").each(function( index ) {
+      newTotal += parseFloat($( this ).val());
+    });
+
+    if(parseFloat(total_choice) != newTotal.toFixed(2)){
+      flagSave = false;
+      $("#"+id).empty().append("<b style='color:red;'>"+newTotal.toFixed(2)+"</b>");
+    }
+    else {
+      flagSave = true;
+      $("#"+id).empty().append("<b style='color:green;'>"+newTotal.toFixed(2)+"</b>");
+    }
+  }
+
+  function formatDateDB(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+</script>
+
+
+
+  

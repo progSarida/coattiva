@@ -1,0 +1,191 @@
+{% if originale.check %}
+<div class="row" style="margin-bottom: 1rem;margin-top: 1rem; margin-bottom: 1rem;">
+  <div class="col-sm-2" style="color: #294A9C">
+      <b>ORIGINALE</b>
+  </div>
+  <div class="col-sm-7">
+
+      {% if originale.pdf.webRoot is not empty %}
+        <a href="{{originale.pdf.webRoot}}" target="_blank"><i class="fa-solid fa-file-pdf fa-xl" title="Originale" style="color:#B22222; margin-right:5px;" ></i></a>
+      {% else %}
+        <i class="fa-solid fa-file-pdf fa-xl" style="color:grey; margin-right:5px;" title="Originale non trovato!"></i>
+      {% endif %}
+
+      {% if originale.pdfrelata.webRoot is not empty %}
+        <a href="{{originale.pdfrelata.webRoot}}" target="_blank"><i class="fa-solid fa-file-pdf fa-xl" 
+        title="Relata originale" style="color:#B22222; margin-right:5px;" ></i></a>
+      {% else %}
+        <i class="fa-solid fa-file-pdf fa-xl" style="color:grey; margin-right:5px;" title="Relata originale non trovata!"></i>
+      {% endif %}
+
+  </div>
+</div>
+{% endif %}
+
+{% for key, notifica in notifiche %}
+  
+  <div class="row" style="{% if originale.check or key>0 %}padding-top:1rem; border-top: 1px solid grey{% endif %}; margin-bottom:5px;">
+    <input type="hidden" name="Notifica[{{notifica.ID}}]['ID']" value="{{notifica.ID}}">
+    <div class="col-sm-2" style="color: #294A9C">
+        <b>{{notifica.Tipo_Destinatario}}</b>
+    </div>
+    <div class="col-sm-6" style="color: red;">
+        <b>{{notifica.Destinatario}}</b>
+    </div>
+    <div class="col-sm-4" style="text-align:right">
+
+    {% if notifica.CAD_Fronte is not empty %}
+    <a style="text-decoration:none; border: 2px solid #B22222; padding:5px; margin-right:8px; cursor: pointer">
+      <i class="fa-solid fa-c"></i><i class="fa-solid fa-a"></i><i class="fa-solid fa-d"></i> <i class="fa-solid fa-f"></i>
+    </a>
+    {% endif %}
+    {% if notifica.CAD_Retro is not empty %}
+    <a style="text-decoration:none; border: 2px solid #B22222; padding:5px; margin-right:20px; cursor: pointer">
+      <i class="fa-solid fa-c"></i><i class="fa-solid fa-a"></i><i class="fa-solid fa-d"></i> <i class="fa-solid fa-r"></i>
+    </a>
+    {% endif %}
+    {% if notifica.Immagine_Fronte is not empty %}
+    <a style="text-decoration:none; border: 2px solid #B22222; padding:5px; margin-right:5px; cursor: pointer">
+      <i class="fa-solid fa-envelope-circle-check fa-lg"></i> <i class="fa-solid fa-f"></i>
+    </a>
+    {% endif %}
+    {% if notifica.Immagine_Retro is not empty %}
+    <a style="text-decoration:none; border: 2px solid #B22222; padding:5px; cursor: pointer">
+      <i class="fa-solid fa-envelope-circle-check fa-lg"></i> <i class="fa-solid fa-r"></i>
+    </a>
+    {% endif %}
+
+    </div>
+  </div>
+  <div class="row" style="padding-bottom:1rem;margin-bottom: 1rem;border-bottom: 1px solid grey">
+    <div class="col-sm-2">
+
+        </div>
+    <div class="col-sm-4">
+      
+        
+        {% if notifica.pdf.copia.webRoot is not empty %}
+          <a href="{{notifica.pdf.copia.webRoot}}" target="_blank"><i class="fa-solid fa-file-pdf fa-xl" title="Copia {{notifica.Tipo_Notifica}}" style="color:#B22222; margin-right:5px;" ></i></a>
+        {% else %}
+          <i class="fa-solid fa-file-pdf fa-xl" style="color:grey; margin-right:5px;" title="Copia {{notifica.Tipo_Notifica}} non trovata!"></i>
+        {% endif %}
+
+        {% if notifica.pdf.checkrelata %}
+            {% if notifica.pdf.signedrelata.webRoot is not empty %}
+              <a href="{{notifica.pdf.signedrelata.webRoot}}" target="_blank"><i class="fa-solid fa-file-signature fa-xl" 
+              title="Relata {{notifica.Tipo_Notifica}} firmata digitalmente" style="color:#B22222; margin-right:5px;" ></i></a>
+            {% elseif notifica.pdf.relata.webRoot is not empty %}
+              <a href="{{notifica.pdf.relata.webRoot}}" target="_blank" ><i class="fa-solid fa-file-pdf fa-xl" 
+              title="Relata {{notifica.Tipo_Notifica}}" style="color:#B22222; margin-right:5px;" ></i></a>
+            {% else %}
+              <i class="fa-solid fa-file-pdf fa-xl" style="color:grey; margin-right:5px;" title="Relata {{notifica.Tipo_Notifica}} non trovata!"></i>
+            {% endif %}
+        {% endif %}
+        
+      {% if notifica.PrintDate is not empty %}
+        <b style="color:#294A9C">STAMPATO IL {{ notifica.PrintDate|date('d/m/Y') }}</b>
+      {% elseif notifica.pdf.copia.webRoot is not empty %}
+        <b style="color:darkgoldenrod"></b>
+      {% else %}
+        <b style="color:#294A9C">DA STAMPARE</b>
+      {% endif %}
+    </div>
+    <div class="col-sm-4">
+      {% if notifica.FlowDate is not empty %}
+        {% if notifica.flowzip.webRoot is not empty %}
+          <a href="{{notifica.flowzip.webRoot}}"><i class="fa-solid fa-file-zipper fa-xl" title="Flusso" style="color:CornflowerBlue; margin-right:5px;" ></i></a>
+        {% else %}
+          <i class="fa-solid fa-file-zipper fa-xl" style="color:grey; margin-right:5px;" ></i>
+        {% endif %}
+        <b>FLUSSO {{ notifica.FlowNumber}} / {{ notifica.FlowYear}} 
+        {{ notifica.FlowUploadDate is empty ? 
+        "CREATO IL "~notifica.FlowDate|date('d/m/Y'):"CONSEGNATO IL "~notifica.FlowUploadDate|date('d/m/Y') }}</b>
+      {% endif %}
+    </div>
+
+  </div>
+  <div class="row" >
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Spese Notifica</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_right" style="width:10rem;" name="Notifica[{{notifica.ID}}]['Spese_Notifica']"
+      value="{{notifica.Spese_Notifica|number_format(2, ',', '')}}"  disabled>
+      <b>&euro;</b>
+    </div>
+  </div>
+
+  <div class="row" >
+    <div class="col-sm-2">
+      <label class="control-label " >Stampatore</label>    
+    </div>
+    <div class="col-sm-2">
+      <select name="Notifica[{{notifica.ID}}]['PrinterId']" style="width: 20rem" disabled>
+        {{notifica.optPrinters|raw}}
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Spedizione</label>    
+    </div>
+    <div class="col-sm-2">
+      <select name="Notifica[{{notifica.ID}}]['PrintTypeId']" style="width: 20rem" disabled>
+        {{notifica.optPrintTypes|raw}}
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Tipo notifica</label>    
+    </div>
+    <div class="col-sm-2">
+      <select name="Notifica[{{notifica.ID}}]['Tipo_Ufficiale']" style="width: 20rem" disabled>
+        {{notifica.optNotificationTypes|raw}}
+      </select>
+    </div>
+  </div>
+
+<div class="row" >
+    <div class="col-sm-2" >
+      <label class="control-label " >Data Notifica</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="Notifica[{{notifica.ID}}]['Data_Notifica']"
+      value="{{ notifica.Data_Notifica is empty ? "":notifica.Data_Notifica|date('d/m/Y') }}"  >
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Note</label>
+    </div>
+    <div class="col-sm-5">
+      <input style="width:50rem;" name="Notifica[{{notifica.ID}}]['Note_Notifica']"
+      value="{{notifica.Note_Notifica}}"  >
+    </div>
+  </div>
+
+  <div class="row" style="margin-bottom: 1rem;">
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Modalità</label>
+    </div>
+    <div class="col-sm-2">
+      <select name="Notifica[{{notifica.ID}}]['Modalita_Notifica']" style="width: 20rem">
+        {{notifica.optModalitaNot|raw}}
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Giacenza</label>    
+    </div>
+    <div class="col-sm-2">
+      <select name="Notifica[{{notifica.ID}}]['Stato_Notifica']" style="width: 20rem">
+        {{notifica.optGiacenzaNot|raw}}
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Anomalia</label>    
+    </div>
+    <div class="col-sm-2">
+      <select name="Notifica[{{notifica.ID}}]['Motivo_Notifica']" style="width: 20rem">
+        {{notifica.optAnomaliaNot|raw}}
+      </select>
+    </div>
+  </div>
+  
+{% endfor %}
+
+   

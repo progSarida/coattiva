@@ -1,0 +1,74 @@
+{% for pigno_lavoro in pignoramenti_datore_lavoro %}
+
+  <input type="hidden" name="PignoLavoro[{{pigno_lavoro.ID}}]['ID']" value="{{pigno_lavoro.ID}}">
+  <input type="hidden" name="PignoLavoro[{{pigno_lavoro.ID}}]['Terzo_ID']" value="{{pigno_lavoro.Terzo_ID}}">
+
+  <div class="row" style="margin-bottom: 1rem;margin-top: 1rem;border-bottom: 1px solid grey">
+
+    <div class="col-sm-2" style="color: #294A9C">
+      <b>DATORE DI LAVORO</b>
+    </div>
+    <div class="col-sm-10">
+      <b><span style="color: red">{{pigno_lavoro.Denominazione_Datore_Lavoro}}</span></b>
+    </div>
+
+  </div>
+  <div class="row" >
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Azienda</label>
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="PignoLavoro[{{pigno_lavoro.ID}}]['Azienda']"
+      value="{{pigno_lavoro.Azienda}}">
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Fonte dati</label>    
+    </div>
+    <div class="col-sm-4">
+       <input class="text_left" style="width:20rem;" name="PignoLavoro[{{pigno_lavoro.ID}}]['Fonte_Dati']"
+      value="{{pigno_lavoro.Fonte_Dati}}">
+    </div>
+  </div>
+  <div class="row" >
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Tipo contratto</label>
+    </div>
+    <div class="col-sm-4">
+      <select name="PignoLavoro[{{pigno_lavoro.ID}}]['Tipo_Contratto_Lavoro']" style="width: 20rem">
+        {{pigno_lavoro.optContratti|raw}}
+      </select>
+          
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Note</label>    
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="PignoLavoro[{{pigno_lavoro.ID}}]['Note']"
+      value="{{pigno_lavoro.Note}}">
+    </div>
+  </div>
+  <div class="row" >
+    <div class="col-sm-2" >
+      <label class="control-label " >Data Costituzione</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="PignoLavoro[{{pigno_lavoro.ID}}]['Data_Costituzione_Ditta_Lavoro']"
+      value="{{ pigno_lavoro.Data_Costituzione_Ditta_Lavoro is empty ? "":pigno_lavoro.Data_Costituzione_Ditta_Lavoro|date('d/m/Y') }}"  >
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label " >Data Ditta Operativa</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="PignoLavoro[{{pigno_lavoro.ID}}]['Data_Ditta_Operativa_Lavoro']"
+      value="{{ pigno_lavoro.Data_Ditta_Operativa_Lavoro is empty ? "":pigno_lavoro.Data_Ditta_Operativa_Lavoro|date('d/m/Y') }}"  >
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label " >Data Dipendenze</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" style="width:11rem;" name="PignoLavoro[{{pigno_lavoro.ID}}]['Data_Dipendenze_Lavoro']"
+      value="{{ pigno_lavoro.Data_Dipendenze_Lavoro is empty ? "":pigno_lavoro.Data_Dipendenze_Lavoro|date('d/m/Y') }}"  >
+    </div>
+  </div>
+  
+{% endfor %}

@@ -1,0 +1,96 @@
+/** questo css serve per far funzionare le drop down multiple della navbar **/
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+}
+
+.caret.caret-up {
+    border-top-width: 0;
+    border-bottom: 4px solid #fff;
+}
+
+
+
+
+/** Questo css sono tutti gli stili di colori della navabar **/
+
+.custom-nav {
+    background-color: #3c94e7;
+    border: 5px solid #E0F0FE;
+}
+.custom-nav .navbar-brand {
+    color: #ecf0f1;
+}
+.custom-nav .navbar-brand:hover,
+.custom-nav .navbar-brand:focus {
+    color: #cecece;
+}
+.custom-nav .navbar-text {
+    color: #ecf0f1;
+}
+.custom-nav .navbar-nav > li > a {
+    color: #ecf0f1;
+}
+.custom-nav .navbar-nav > li > a:hover,
+.custom-nav .navbar-nav > li > a:focus {
+    color: #cecece !important;
+}
+.custom-nav .navbar-nav > .active > a,
+.custom-nav .navbar-nav > .active > a:hover,
+.custom-nav .navbar-nav > .active > a:focus {
+    color: #cecece;
+    background-color: #1f7cd5;
+}
+
+.list-item:hover {
+    color: #cecece !important;
+    background-color: #1f7cd5 !important;
+}
+
+.custom-nav .navbar-nav > .open > a,
+.custom-nav .navbar-nav > .open > a:hover,
+.custom-nav .navbar-nav > .open > a:focus {
+    color: #cecece;
+    background-color: #1f7cd5;
+}
+.custom-nav .navbar-toggle {
+    border-color: #1f7cd5;
+}
+.custom-nav .navbar-toggle:hover,
+.custom-nav .navbar-toggle:focus {
+    background-color: #1f7cd5;
+}
+.custom-nav .navbar-toggle .icon-bar {
+    background-color: #ecf0f1;
+}
+.custom-nav .navbar-collapse,
+.custom-nav .navbar-form {
+    border-color: #ecf0f1;
+}
+.custom-nav .navbar-link {
+    color: #ecf0f1;
+}
+.custom-nav .navbar-link:hover {
+    color: #cecece;
+}
+
+@media (max-width: 767px) {
+    .custom-nav .navbar-nav .open .dropdown-menu > li > a {
+        color: #ecf0f1;
+    }
+    .custom-nav .navbar-nav .open .dropdown-menu > li > a:hover,
+    .custom-nav .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: #cecece;
+    }
+    .custom-nav .navbar-nav .open .dropdown-menu > .active > a,
+    .custom-nav .navbar-nav .open .dropdown-menu > .active > a:hover,
+    .custom-nav .navbar-nav .open .dropdown-menu > .active > a:focus {
+        color: #cecece;
+        background-color: #1f7cd5;
+    }
+}

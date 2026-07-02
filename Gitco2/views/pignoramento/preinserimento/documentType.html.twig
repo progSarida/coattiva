@@ -1,0 +1,18 @@
+<form id="f_documentType" name="f_documentType" action="{{form_documentType.action}}" method="post">
+  <input type="hidden" name="Partita_ID" value="{{partita.ID}}" >
+  <input type="hidden" name="c" value="{{partita.CC}}" >
+  <input type="hidden" name="a" value="{{partita.Anno_Riferimento}}" >
+
+<div class="row">
+  <div class="col-sm-4">
+    <select class="form-control resize" name="DocumentTypeId" id="DocumentTypeId">
+        {{optDocumentTypes|raw}}
+    </select>
+  </div>
+  <div class="col-sm-1" ></div>
+  <div class="col-sm-4" >
+    <input type="submit" id="documentTypeSubmit" class="btn btn-danger" value="Salva">
+  </div>
+</div>
+
+</form>

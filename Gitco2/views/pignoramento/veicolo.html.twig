@@ -1,0 +1,97 @@
+  <div class="row">
+    <div class="col-sm-2">
+      <label class="control-label resize " >Data iscrizione fermo</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" name="Data_Iscrizione_Fermo" style="width: 11rem"
+          id="Data_Iscrizione_Fermo" value="{{ veicolo.Data_Iscrizione_Fermo is empty ? "":pignoramento.Data_Iscrizione_Fermo|date('d/m/Y') }}">
+    </div>
+  </div>
+  <div class="row"><hr></div>
+  <div class="row">
+    <div class="col-sm-2">
+      <label class="control-label resize " >Tipo</label>
+    </div>
+    <div class="col-sm-3">
+      <select name="Tipo_Veicolo" id="Tipo_Veicolo" style="width: 20rem">
+        {{veicolo.optTipoVeicolo|raw}}
+      </select>
+    </div>
+    <div class="col-sm-1">
+      <label class="control-label resize " >Targa</label>
+    </div>
+    <div class="col-sm-3">
+      <input name="Targa_Veicolo" style="width: 20rem"
+      id="Targa_Veicolo" value="{{veicolo.Targa_Veicolo}}">
+
+    </div>
+    <div class="col-sm-1">
+      <label class="control-label resize " >Data visura</label>
+    </div>
+    <div class="col-sm-2">
+      <input class="text_center picker" name="Data_Visura" style="width: 11rem"
+          id="Data_Visura" value="{{ veicolo.Data_Visura is empty ? "":pignoramento.Data_Visura|date('d/m/Y') }}">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-2">
+      <label class="control-label resize " >Marca</label>
+    </div>
+    <div class="col-sm-3">
+      <input name="Marca_Veicolo" style="width: 20rem"
+      id="Marca_Veicolo" value="{{veicolo.Marca_Veicolo}}">
+    </div>
+    <div class="col-sm-1">
+      <label class="control-label resize " >Modello</label>
+    </div>
+    <div class="col-sm-3">
+      <input name="Modello_Veicolo" style="width: 20rem"
+      id="Modello_Veicolo" value="{{veicolo.Modello_Veicolo}}">
+
+    </div>
+    <div class="col-sm-1">
+      <label class="control-label resize " >Fonte dati</label>
+    </div>
+    <div class="col-sm-2">
+      <select name="Fonte_Dati" id="Fonte_Dati" style="width: 11rem">
+        {{veicolo.optFonteDati|raw}}
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-2">
+      <label class="control-label resize " >Telaio</label>
+    </div>
+    <div class="col-sm-3">
+      <input name="Telaio_Veicolo" style="width: 20rem"
+      id="Telaio_Veicolo" value="{{veicolo.Telaio_Veicolo}}">
+    </div>
+    <div class="col-sm-1">
+      <label class="control-label resize " >Anno</label>
+    </div>
+    <div class="col-sm-3">
+      <input name="Anno_Immatricolazione" style="width: 9rem; text-align:right"
+      id="Anno_Immatricolazione" value="{{veicolo.Anno_Immatricolazione}}">
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-2">
+      <label class="control-label resize " >Portata</label>
+    </div>
+    <div class="col-sm-3">
+      <input name="Portata_Veicolo" style="width: 9rem; text-align:right"
+      id="Portata_Veicolo" value="{{veicolo.Portata_Veicolo in ['',0]  ? "":veicolo.Portata_Veicolo|number_format(2, ',', '')}}">
+      <b>q.li</b>
+    </div>
+    <div class="col-sm-1">
+      <label class="control-label resize " >Valore</label>
+    </div>
+    <div class="col-sm-3">
+      <input name="Valore_Veicolo" style="width: 9rem; text-align:right"
+      id="Valore_Veicolo" value="{{veicolo.Valore_Veicolo|number_format(2, ',', '')}}">
+      <b>&euro;</b>
+    </div>
+  </div>

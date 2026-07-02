@@ -1,0 +1,388 @@
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+
+sql_mode = "ONLY_FULL_GROUP_BY,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+
+sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"	//quello modificato
+//TODO Cose da fare
+
+Table 290_n0_n9
+Field:
+- Data_Invio_Fornitura: null
+- Record_N3: null
+
+
+Table 290_n1_n5
+Field:
+- Num_Ruolo:null
+- Codice_Sede:null
+- Tipo_Compenso:null
+- Num_Convenzione:null
+- Flag_Articoli: da Enum[4,5,9] a varchar 30 | null
+- Record_N3: null
+
+
+Table 290_n2
+Field:
+- Numero_Contribuente: null
+- Codice_Controllo: null
+- Codice_Indirizzo_Res: null
+- Lettera_Civico_Res: da varchar 2 a varchar 6 //NON VA BENE PERCHE' IL 290 RICEVE SOLO 2 CARATTERI QUINDI VA BENE VARCHAR 2
+- Interno_Res: null
+- Codice_Indirizzo_Dom: null
+- Civico_Dom: null
+- Civico_Res: null
+- Interno_Dom: null
+- Km_Dom: null
+- Ditta: Null come default value
+- Flag_Ingiunzione: Null come default value
+- Indirizzo_Dom: null
+- Lettera_Civico_Dom: null
+- Frazione_Dom: null
+- Cointestatari: null
+- Lettera_Civico_Res: null
+
+
+Table 290_n4
+Field:
+- Num_Semestri_Interessi: null
+- Stato_Ingiunzione: add default value | null
+- Stato_Stampa: add default value | null
+- Pagamenti_Associati: add default value | null
+- Scorporo_Tributo: add default value | null
+- Scorporo_Interessi: add default value | null
+- Scorporo_Spese_Ricerca: add default value | null
+- Scorporo_Spese_Notifica: add default value | null
+- Scorporo_Eca: add default value | null
+- Scorporo_Tributo_Provinciale: add default value | null
+- Codice_Reparto: null
+- Targa_Sanzione: null
+
+
+Table utente
+Field:
+- Comune_Nascita: null
+- Ditta: add default value | null
+- Prec_Denom: add default value | null
+- Mail: add default value | null
+- Paese_Nascita: null
+- Partita_Iva: null
+- Azienda: null
+- PEC: null
+- Provincia_Nascita: null
+- Cognome: null
+- Nome: null
+- Codice_Fiscale: null
+
+
+Table ruolo
+Field:
+- Tipo_Compenso: null
+- Comune_ID: null
+
+
+Table indirizzo
+Field:
+- Dettagli: null
+- Comune: null
+
+
+Table partita_tributi
+Field:
+- Coo_ID: null
+- Coo_Tipo: null
+
+
+Table tributo
+Field:
+- Targa_Sanzione: null
+
+
+Table atto
+Field:
+- ID_Cronologico: null
+- Anno_Cronologico: null
+- Data_Decorrenza_Interessi: null
+- Info_Cartella: null
+- Note: null
+- Spese_Notifica_Precedenti: null
+- Spese_Notifica: null
+- Interessi: null
+- Interessi_Precedenti: null
+- Diritto_Riscossione_Minimo: null
+- Diritto_Riscossione_Massimo: null
+- Totale_Dovuto: null
+- Tipo_Protocollo: add default value | null
+- Stato: add default value | null
+- Stato_Esecuzione: add default value | null
+- Fase: add default value | null
+- Importo: add default value | null
+- Sanzione: add default value | null
+- Addizionale: add default value | null
+- Interessi_Codici_Tributo: add default value | null
+- CAN: add default value | null
+- CAD: add default value | null
+- Ulteriori_Spese: add default value | null
+- Operatore_Rateizzazione: add default value | null
+- Protocollo: null
+- Comune_Id: null
+- Riferimento: add default value | null
+- Stato_Stampa: null
+- Cronologico_Vecchio: null
+- Posizione_Gestore_Rateizzazione: null
+
+
+Table pagamento
+Field:
+- CC: null
+- Partita_ID: null
+- Tipo_Atto: null
+- Importo: null
+- Data_Registrazione: null
+- Data_Travaso_A_Gitco: default value null, (da 0000-00-00)
+
+
+Table pagamenti_importati 
+Field:
+- Tipo_Pagamento: null
+- Riferimento_Atto: null
+- Comune_Riferimento: null
+- Codice_Txt_Composto: null
+- Progressivo_Marcaggio: null
+- Conto_Traente: null
+- Divisa_Txt_Pagamento: null
+- Progressivo_Selezione: null
+- Immagine_Retro: null
+- Codice_Txt_Sconosciuto: null
+- Tipo_Txt_Bollettino: null
+- Sostitutivo_Txt: null
+- Provincia_Posta: null
+- Codice_Provincia_Posta: null
+- Codice_Ufficio_Posta: null
+- Divisa_Pagamento: null
+- Flag_Insanabili: null
+- Report_Version: null
+- SV: null
+- Immagine_Fronte: null
+
+Table email_inviate
+Field: 
+- Table_Collegata: null
+
+
+Table documento
+Field:
+- Oggetto: null
+
+
+Table indirizzo
+Field:
+- Esponente: null
+- Provincia: null
+- Frazione: null
+- Telefono: null
+- Fax: null
+- Cap: null
+
+
+Table storico_residenza
+Field:
+- Via_ID: null
+- Via_Cap_ID: null
+- CC_Indirizzo: null
+- Paese: null
+- Comune: null
+- Provincia: null
+- Frazione: null
+- Esponente: null
+- Cap: null
+- Dettagli: null
+- Telefono: null
+- Fax: null
+- Lock_User: null
+- Data_Inizio: null
+
+
+Table toponimo
+Field:
+- Comune: null
+- Cap: null
+
+
+Table pignoramento_generale
+
+Field:
+- Comune_Banca: null
+- Stato_Pignoramento: null
+- Tipo: null
+- Spese_Notifica_Debitore: null
+- Totale_Dovuto: null
+- ID: A.I.
+
+
+Table notifica_atto
+Field:
+- Note_Notifica: null
+
+
+Table partita_tributi 
+Field:
+- Flag_Blocco_Coazione: null
+- Cancellazione: null
+- Sottotipo: null
+
+
+Table pignoramento_spese
+Field:
+- Incremento_Percentuale: null
+
+
+Table gestore
+Field:
+- Orario: null
+- Codice_Fiscale: null
+- Partita_Iva: null
+- Stemma: null
+
+
+Table ufficio_giudiziario
+Field:
+- Esponente: null
+- Dettagli: null
+- Sito: null
+- PEC: null
+- Fax: null
+- Mail: null
+- Sezione: null
+- Toponimo: null
+- Civico: null
+- Esponente: null
+- Interno: null
+- Dettagli: null
+- Telefono: null
+- Fax: null
+- Mail: null
+- Sito: null
+- PEC: null
+- Denominazione: null
+- Forma_Giuridica: null
+
+
+Table banca
+Field:
+- Mail: null
+- Sito: null
+- Fax: null
+- Esponente: null
+- Dettagli: null
+- Orario: null
+- PEC: null
+- Telefono: null
+- Password: null
+- Codice_Fiscale: null
+
+
+Table enti_esterni 
+Field:
+- Frazione: null
+
+
+Table ufficio_comune
+Field:
+- Dettagli: null
+- Dettagli: null
+- Telefono: null
+- Fax: null
+- Mail: null
+- Sito: null
+- PEC: null
+-  Modalita_Invio: null
+- Partita_Iva: null
+- Esponente: null
+
+
+Table parametri_pagamento
+Field:
+- Tipo_Documento: null
+- Stemma: null
+
+
+Table tariffe_coazione
+Field:
+- Deposito_Portata: null
+- Data_Inizio: null
+
+
+Table enti_gestiti
+Field:
+- Codici_Unione: null
+
+
+Table pignoramento_presso_terzi 
+Field:
+- Fonte_Dati: null
+- Note: null
+
+
+Table notifica_atto
+Field:
+- Modalita_Stampa: null
+
+
+Table tributo
+Field:
+- Titolo_Entrata: null
+- Descrizione_Entrata: null
+- Matricola: null
+
+
+Table ispezioni
+Field:
+- Denominazione: null
+
+
+Table pagamenti_importati
+Field:
+- Data_Caricamento: default null
+- Data_Pagamento: default null
+- Data_Preallibramento: default null
+- Data_Postallibramento: default null
+- Data_Importazione: default null
+
+
+Table parametri_atto_intimazione_ingiunzione
+Field:
+- ID: A.I.
+- Relazione_Titolo_Testo: add default value | null
+- Relazione_Testo_Posta: add default value | null
+- Relazione_Testo_Mani: add default value | null
+- Relazione_Testo_PEC: add default value | null
+- Luogo_Lettera: add default value | null
+- Qualifica_Firma_Notifica: add default value | null
+- Firma_Notifica: add default value | null
+
+
+Table interessi_tributi
+Field: Data_Fine: null
+
+
+Table gestore
+Field:
+- Mail: null
+- Fax: null
+- PEC: null
+- Sito: null
+- Esponente: null
+- Dettagli: null
+
+
+Table parametri_responsabili
+Field:
+- Funzionario_Telefono: null
+- Responsabile_Telefono: null
+- Ufficiale_Telefono: null
+- Responsabile_Richieste_Telefono: null
+- Funzionario_Firma: null
+- Responsabile_Testo: null
+- Ufficiale_Testo: null
+- Responsabile_Richieste_Testo: null
+

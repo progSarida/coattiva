@@ -1,0 +1,266 @@
+<form id="f_banca" name="f_banca" action="{{form_banca.action}}" method="post">
+  <input type="hidden" name="Partita_ID" value="{{partita.ID}}" >
+  <input type="hidden" name="Utente_ID" value="{{partita.Utente_ID}}" >
+  <input type="hidden" name="c" value="{{partita.CC}}" >
+  <input type="hidden" name="a" value="{{partita.Anno_Riferimento}}" >
+
+  <input type="hidden" name="DocumentTypeId" value="8" >
+  <input type="hidden" name="da_n_elenco" value="{{partita.Comune_ID}}" >
+  <input type="hidden" name="a_n_elenco" value="{{partita.Comune_ID}}" >
+  <input type="hidden" name="ente" value="{{partita.CC}}" >
+  <input type="hidden" name="data_elab" value="{{form_banca.data_elab}}" >
+  <input type="hidden" name="data_int" value="{{form_banca.data_int}}" >
+  <input type="hidden" name="description" value="Pignoramento presso banca partita {{partita.ID}} per Comune {{partita.CC}} , anno {{partita.Anno_Riferimento}}" >
+
+  <div class="row rowBancaStart" style="margin-bottom:1rem">
+    <div class="col col-sm-8" >
+      <input type="button" onclick="aggiungiBanca();" class="btn btn-primary" value="Nuovo">
+      <input type="button" onclick="aggiungiTutte();" class="btn btn-primary" value="Tutte">
+      <input type="button" id="rimuoviBanche_" onclick="rimuoviBanche();" class="btn btn-primary" value="Rimuovi Tutto">
+      <input type="submit" id="bancaSubmit" class="btn btn-danger" value="Salva">
+      <input type="submit" id="pignoSubmit" onclick="creaPignoramento();" class="btn btn-danger" value="Crea Pignoramento">
+    </div>
+      
+  </div>
+
+
+{% for keyPvt, pvt_banca in pvt_banche %}
+
+  <div class="row rowBanca{{keyPvt}} genRowBanca" style="padding-top:1rem;background-color:whitesmoke;margin-bottom: 1rem;border-bottom: 1px solid grey; padding-bottom:1rem">
+    <div class="col-sm-2" style="color: #294A9C;line-height:3.5rem">
+      <b>BANCA <i class="fa-solid fa-xmark fa-lg" style="margin-left:2rem; color:red; cursor: pointer" title="Elimina terzo" onclick="rimuoviBanca({{keyPvt}})"></i></b>
+        <input type="hidden" id="TerzoPvt_ID_{{keyPvt}}" name="TerzoPvt[{{keyPvt}}][ID]" value="{{pvt_banca.ID}}">
+        <input type="hidden" id="Banca_ID_{{keyPvt}}" name="TerzoPvt[{{keyPvt}}][Terzo_ID]" value="{{pvt_banca.Terzo_ID}}">
+    </div>
+    <div class="col-sm-4">
+      <input class="form-control resize" style="width: 50rem; background-color: rgb(153, 204, 255); border: 2px solid black;" 
+      readonly id="Banca_{{keyPvt}}" value="{{pvt_banca.Denominazione_Banca}}" ondblclick="/*caricaBanca({{keyPvt}});*/openOfcanvas('bankSearchModalH',{{keyPvt}});">
+      
+    </div>
+    <div class="col-sm-6 text-right" style="line-height:3.5rem">
+      <b>{{ pvt_banca.Data_Aggiornamento is empty ? "":"Aggiornato il "~pvt_banca.Data_Aggiornamento|date('d/m/Y') }}</b>
+    </div>
+  </div>
+  <div class="row rowBanca{{keyPvt}}" style="margin-top:1rem;padding:0.2rem;">
+    <div class="col-sm-2">
+      <label class="control-label " >Fonte dati</label>    
+    </div>
+    <div class="col-sm-4">
+       <input class="text_left" style="width:30rem;" name="TerzoPvt[{{keyPvt}}][Fonte_Dati]"
+      value="{{pvt_banca.Fonte_Dati}}">
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Note</label>    
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:30rem;" name="TerzoPvt[{{keyPvt}}][Note]"
+      value="{{pvt_banca.Note}}">
+    </div>
+  </div>
+  <div class="row rowBanca{{keyPvt}}" style="padding:0.2rem;">
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Tipo titolo</label>
+    </div>
+    <div class="col-sm-4">
+        <select name="TerzoPvt[{{keyPvt}}][Tipo_Titolo_Banca]" style="width: 20rem">
+        {{pvt_banca.optTitoli|raw}}
+      </select>
+    </div>
+    <div class="col-sm-2 ">
+      <b>Titolo</b>
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:30rem;" name="TerzoPvt[{{keyPvt}}][Titolo_Banca]"
+      value="{{pvt_banca.Titolo_Banca}}">
+    </div>
+    
+  </div>
+  <div class="row rowBanca{{keyPvt}}" style="border-bottom: 1px solid grey; padding:0.2rem;padding-bottom:1rem">
+    <div class="col-sm-2" >
+      <label class="control-label " >Intestatario</label>
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:30rem;" name="TerzoPvt[{{keyPvt}}][Intestatario_Banca]"
+      value="{{pvt_banca.Intestatario_Banca}}">
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label " >Coointestatari</label>
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:30rem;" name="TerzoPvt[{{keyPvt}}][Coointestatari_Banca]"
+      value="{{pvt_banca.Coointestatari_Banca}}">
+    </div>
+  </div>
+  
+{% endfor %}
+
+</form>
+
+<script>
+
+  var numeroBanche = {{pvt_banche|length}}-1;
+  function enableSave(){
+    if($('.genRowBanca').length>0)
+      {
+        $('#bancaSubmit').prop('disabled',false);
+        $('#rimuoviBanche_').prop('disabled',false);
+      }
+    else
+     {
+       $('#bancaSubmit').prop('disabled',true);
+       $('#rimuoviBanche_').prop('disabled',true);
+     }
+     EsistonoRighe();
+  }
+  
+  function rimuoviBanca(numero){
+
+    if(confirm("Vuoi eliminare la banca?")){
+      terzoPvtId = parseInt($('#TerzoPvt_ID_'+numero).val());
+      if(terzoPvtId>0){
+        $.ajax({
+          type: 'POST',
+          url: '{{form_banca.delete}}',
+          data : {
+            'TerzoPvt_ID' : terzoPvtId,
+            'Partita_ID' : {{partita.ID}},
+            'c': '{{partita.CC}}',
+            'a': {{partita.Anno_Riferimento}}
+          },
+          success: function(result){
+              console.log(result);
+              $('.rowBanca'+numero).remove();
+              enableSave();
+              alert("Eliminazione avvenuta con successo");
+          },
+          error: function(err){
+              alert("Errore nella eliminazione!!");
+              console.log(err);
+          }
+        });
+      }
+      else{
+        $('.rowBanca'+numero).remove();
+        enableSave();
+      }
+      
+    }
+
+}
+
+function rimuoviBanche(){
+
+    if(confirm("Vuoi eliminare tutte le banhce?")){
+      $("#f_banca").attr('action', '{{form_banca.deleteAll}}');
+      $("#f_banca").submit();
+      
+      
+      }
+  }
+  function aggiungiBanca(){
+    lastTerzo = numeroBanche;
+    numeroBanche++;
+
+    $.ajax({
+        method: "POST",
+        url: "{{PATHS.WEB_ROOT}}/coattiva/templates/templateBanca.php",
+        data: {
+            'rowKey' : numeroBanche,
+            'Partita_ID' : {{partita.ID}},
+            'c': '{{partita.CC}}',
+            'a': {{partita.Anno_Riferimento}}
+        },
+        dataType: 'json',
+        success: function (response) {
+            if( response.status === true ) {
+              if($('.genRowBanca').length>0)
+                $('.rowBanca'+lastTerzo+':last').after(response.data);
+              else
+                $('.rowBancaStart').after(response.data);
+
+                $( ".picker" ).datepicker(); 
+              enableSave();
+            }
+        }
+    });
+  }
+function aggiungiTutte(){
+    lastTerzo = numeroBanche;
+    numeroBanche++;
+    $.ajax({
+        method: "POST",
+        url: "{{PATHS.WEB_ROOT}}/coattiva/templates/templateBancaTutti.php",
+        data: {
+            'Partita_ID' : {{partita.ID}},
+            'c': '{{partita.CC}}',
+            'a': {{partita.Anno_Riferimento}}
+        },
+        dataType: 'json',
+        success: function (response) {
+            if( response.status === true ) {
+              if($('.genRowBanca').length>0)
+                $('.rowBanca'+lastTerzo+':last').after(response.data);
+              else
+                $('.rowBancaStart').after(response.data);
+              $( ".picker" ).datepicker(); 
+              enableSave();
+            }
+        }
+    });
+
+  }
+function caricaBanca(numero)
+{
+
+    selectParent = "caricaBanca";
+    num = numero;
+
+    var stringa = "{{PATHS.WEB_ROOT}}/search/banche/ricerca_banche.php?richiesta=assegnaBancaPigno&c=*****&a={{partita.Anno_Riferimento}}";
+
+    openWindowSearch(stringa,{width:700, height:500, left:(window.screen.width/2)-350, top:(window.screen.height/2)-250});
+
+}
+
+function creaPignoramento(){
+
+    if(confirm("Vuoi creare il pignoramento presso banche?")){
+      $("#f_banca").attr('action', '{{form_banca.creaPigno}}');
+      $("#f_banca").submit();
+      
+      
+      }
+  }
+
+
+    
+  function EsistonoRighe(){
+    
+    $.ajax({
+        method: "POST",
+        url: "{{form_banca.existing}}",
+        data: {
+            'Partita_ID' : {{partita.ID}},
+            'c': '{{partita.CC}}',
+            'a': {{partita.Anno_Riferimento}},
+            'Utente_ID' : "{{partita.Utente_ID}}" 
+        },
+        dataType: 'json',
+        success: function (response) {
+              console.log(response.esistono);
+              if (response.esistono=="true")
+              {
+                $('#pignoSubmit').prop('disabled',false);
+              }
+              else
+              {
+                $('#pignoSubmit').prop('disabled',true);
+              }
+            }
+        
+    });
+
+  }
+
+enableSave();
+
+</script>

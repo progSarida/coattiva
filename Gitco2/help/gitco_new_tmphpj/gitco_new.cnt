@@ -1,0 +1,17 @@
+:Base gitco_new.hlp
+1 GITCO
+2 Introduzione
+3 Iniziamo=Iniziamo>Main
+3 Benvenuto in Gitco!=BenvenutoinGitco>Main
+3 Contattaci=Contattaci>Main
+3 Sarida Srl=SaridaSrl>Main
+2 Menu principale
+3 Anagrafe
+4 Dati Soggetto=DatiSoggetto>Main
+4 Annotazioni=Annotazioni>Main
+4 Domicilio=Domicilio>Main
+4 Recapito=Recapito>Main
+4 Dettagli=Dettagli>Main
+4 Cambio Residenza=CambioResidenza>Main
+2 FAQ=FAQ>Main
+

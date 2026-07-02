@@ -1,0 +1,37 @@
+<html>
+	<head>
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript">
+			google.load("visualization", "1", {packages:["piechart"]});
+			google.setOnLoadCallback(drawChart);
+			function drawChart()
+			{
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Task');
+				data.addColumn('number', 'Hours per Day');
+				data.addRows([
+					['Jan', 10],
+					['Feb', 2],
+					['Mar', 3],
+					['Apr', 5],
+					['May', 3]
+				]);
+
+				var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+				chart.draw(data, {
+					width: 400,
+					height: 240,
+					is3D: true,
+					title: 'Test Pie Graph',
+					titleFontSize: 14,
+					legend: 'right',
+					legendBackgroundColor: {stroke:'black', fill:'#eee', strokeSize: 1}
+				});
+			}
+		</script>
+	</head>
+
+	<body>
+		<div id="chart_div"></div>
+	</body>
+</html>

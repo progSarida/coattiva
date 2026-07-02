@@ -1,0 +1,59 @@
+
+  
+  <div class="row rowBanca{{keyPvt}} genRowBanca" style="padding-top:1rem;background-color:whitesmoke;margin-bottom: 1rem;border-bottom: 1px solid grey; padding-bottom:1rem">
+    <div class="col-sm-2" style="color: #294A9C;line-height:3.5rem">
+      <b>BANCA <i class="fa-solid fa-xmark fa-lg" style="margin-left:2rem; color:red; cursor: pointer" title="Elimina terzo" onclick="rimuoviBanca({{keyPvt}})"></i></b>
+        <input type="hidden" id="TerzoPvt_ID_{{keyPvt}}" name="TerzoPvt[{{keyPvt}}][ID]" >
+        <input type="hidden" id="Banca_ID_{{keyPvt}}" name="TerzoPvt[{{keyPvt}}][Terzo_ID]" >
+    </div>
+    <div class="col-sm-4">
+      <input class="form-control resize" style="width: 50rem; background-color: rgb(153, 204, 255); border: 2px solid black;" 
+      readonly id="Banca_{{keyPvt}}" ondblclick="/*caricaBanca({{keyPvt}});*/openOfcanvas('bankSearchModalH',{{keyPvt}});">
+      
+    </div>
+  </div>
+  <div class="row rowBanca{{keyPvt}}" style="margin-top:1rem;padding:0.2rem;">
+    <div class="col-sm-2">
+      <label class="control-label " >Fonte dati</label>    
+    </div>
+    <div class="col-sm-4">
+       <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Fonte_Dati]">
+    </div>
+    <div class="col-sm-2">
+      <label class="control-label " >Note</label>    
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Note]">
+    </div>
+  </div>
+  <div class="row rowBanca{{keyPvt}}" style="padding:0.2rem;">
+    <div class="col-sm-2" >
+      <label class="control-label resize " >Tipo titolo</label>
+    </div>
+    <div class="col-sm-4">
+      <select name="TerzoPvt[{{keyPvt}}][Tipo_Titolo_Banca]" style="width: 20rem">
+        {{optTitoli|raw}}
+      </select>
+    </div>
+    <div class="col-sm-2 ">
+      <b>Titolo</b>
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Titolo_Banca]">
+    </div>
+    
+  </div>
+  <div class="row rowBanca{{keyPvt}}" style="padding:0.2rem;border-bottom: 1px solid grey;padding-bottom:1rem">
+    <div class="col-sm-2" >
+      <label class="control-label " >Intestatario</label>
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Intestatario_Banca]">
+    </div>
+    <div class="col-sm-2" >
+      <label class="control-label " >Coointestatari</label>
+    </div>
+    <div class="col-sm-4">
+      <input class="text_left" style="width:20rem;" name="TerzoPvt[{{keyPvt}}][Coointestatari_Banca]">
+    </div>
+  </div>

@@ -1,0 +1,11 @@
+<div class="row" >
+    <div class="col-sm-12 text-center" >
+      <b>{{pignoramento.DocumentType|upper}} 
+      {% if pignoramento.ID_Cronologico>0 %}
+        <span style="color:red;">{{pignoramento.ID_Cronologico}} / {{pignoramento.Anno_Cronologico}}</span>
+      {% else %}
+        <span style="color:red;">Cronologico da assegnare</span>
+      {% endif %}
+      </b>
+    </div>
+  </div>

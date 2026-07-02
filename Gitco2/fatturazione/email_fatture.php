@@ -1,0 +1,1115 @@
+<?php
+require $_SERVER['DOCUMENT_ROOT'] . "/Gitco2/percorsi.php";
+include LIBRERIE . "/funzioni.php";
+
+include CLASSI . "/comuni.php";
+include CLASSI . "/fatture.php";
+include CLASSI . "/parametri.php";
+require_once CLASSI. "\php-imap-client-master\Imap.php";
+
+if (!session_id()) session_start();
+
+if ($_SESSION['username']==NULL)
+{
+	header("Location:/gitco2/autenticazione/accesso_negato.php");
+	die;
+}
+
+if ($_SESSION['CC_User'] == "***+")
+{
+	//alertAllGlobalVariables();
+	//return;
+}
+
+$c = get_var('c');
+$a = get_var('a');
+
+$autorizzazione = get_var('aut_tipo');
+
+$nome_user = "Operatore: " . $_SESSION['username'];
+
+$questaPagina = "email_fatture.php";
+
+
+
+function CercaVoce ($txtOriginale, $voce, $carTermine)
+{
+	//alert ($voce);
+	$posizione = strpos($txtOriginale, $voce);
+	
+	$chrCR = Chr(13);
+	$chrLF = Chr(10);
+	$lett1Carattere = substr($txtOriginale, $posizione, 1);
+	
+	$volte = 0;
+	$txxt = "";
+	while ($volte < 200)
+	{
+		$posizione++;
+		$txxt .= $lett1Carattere;
+		//echo "<br>$volte " . $txxt;
+		$lett1Carattere = substr($txtOriginale, $posizione, 1);
+		$volte++;
+		if ($lett1Carattere == $chrCR) break;
+		else if ($lett1Carattere == $chrLF) break;
+		else if ($carTermine != "" && $lett1Carattere == $carTermine) break;
+	}
+	//echo "<br>--fine " . $txxt;
+	/*$esito = "";
+	for ($zzz = strlen($txxt)-1; $zzz >= 0; $zzz--)
+	{
+		$unCarattere = substr($txxt, $zzz, 1);
+		//echo "<br>----" . $unCarattere;
+		if ($unCarattere != $confronto) $esito = $unCarattere . $esito;
+		else break;
+	}*/
+	$lunghVoce = strlen($voce);
+	$lunghEsito = strlen($txxt) - $lunghVoce;
+	$esito = substr($txxt, $lunghVoce, $lunghEsito);
+	//echo "<br>--finefine" . $esito . "----";
+	return $esito;
+}
+
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<link rel="shortcut icon"  href="/gitco2/immagini/gitco.png">
+<title>Email</title>
+
+<link rel=StyleSheet href="/gitco2/CSS/classi_semplici.css" type="text/css" media=screen>
+<link rel=StyleSheet href="/gitco2/CSS/jquery-ui-1.10.3.custom.css" type="text/css" media=screen>
+<style> .ui-datepicker { font-size:11px; } </style>
+
+
+<script type="text/javascript" language="javascript" src="/gitco2/librerie/js/JQuery.js" ></script>
+<script type="text/javascript" language="javascript" src="/gitco2/librerie/js/form_jquery.js" ></script>
+<script type="text/javascript" language="javascript" src="/gitco2/librerie/js/funzioni.js" ></script>
+
+<script type="text/javascript" language="javascript" src="/gitco2/librerie/js/jquery-ui.js" ></script>
+<script type="text/javascript" language="javascript" src="/gitco2/librerie/js/datepicker.js" ></script>
+    
+<script type="text/javascript" language="Javascript">
+
+//F2
+function cambia_F2()
+{
+	return true;
+}
+
+//F3
+function salva_form() 
+{
+	SalvataggioDato();
+}
+
+//F4
+function cancella_form() 
+{     
+
+}
+
+// F5 
+function annulla ()
+{
+	var stringaLink = "<?=$questaPagina?>?";
+	stringaLink += "c=" + "<?php echo $c?>";
+	stringaLink += "&a=" + "<?php echo $a?>";
+	location.href = stringaLink;
+}
+
+
+//F6
+function nuovo_F6()
+{
+	$("[name=hiddenid]").val("NUOVO");
+	$('#email_form').submit();
+}
+
+//F7-F8
+function cambia_pag(value)
+{
+	
+}
+
+//PAG GIU
+function pag_prec()
+{
+	
+}
+
+//PAG SU
+function pag_suc()
+{
+	
+}
+
+//F9
+function ricerca_F9()
+{
+	
+}
+
+//F10
+function stampa_F10()
+{
+	return true;
+}
+
+function MostraNumeriCon2CifreDecimali (numero)
+{
+	var puntoce = false;
+	var risultato = "";
+	var testo = numero.toString();
+
+	if (testo == "")
+	{
+		return "0,00";
+	}
+	
+	for (var i = 0; i < testo.length; i++)
+	{
+		var car = testo.charAt(i);
+		if (car == '.')
+		{
+			puntoce = true;
+		}
+		else if (car == ',')
+		{
+			testo = testo.replace(",", ".");
+			puntoce = true;
+		}
+	}
+	if (puntoce == true)
+	{
+		var arr_num = testo.split(".");
+		var terzodecimale = arr_num[1].charAt(2);
+		if (terzodecimale >= "5" && terzodecimale <= "9")
+		{
+			testo = arr_num[0] + "." + arr_num[1].charAt(0) + arr_num[1].charAt(1);
+			var valoreaggiunto = parseFloat(testo);
+			if (valoreaggiunto > 0) valoreaggiunto += 0.011; // serve 0.011 anzichè 0.01 perchè SBAGLIA ARROTONDAMENTO!!
+			else if (valoreaggiunto < 0) valoreaggiunto -= 0.011;
+			testo = valoreaggiunto.toString();
+			arr_num = testo.split(".");
+		} 
+
+		if (arr_num[1].charAt(0) == "" || arr_num[1].charAt(1) == "")
+		{
+			if (arr_num[1].charAt(0) == "" && arr_num[1].charAt(1) == "")
+				risultato = arr_num[0] + ",00";  // non dovrebbe mai essere qui a meno di errori!
+			else if (arr_num[1].charAt(0) == "")
+				risultato = arr_num[0] + ",0" + arr_num[1].charAt(1);  // caso assurdo
+			else if (arr_num[1].charAt(1) == "")
+				risultato = arr_num[0] + "," + arr_num[1].charAt(0) + "0";
+		}
+		else
+			risultato = arr_num[0] + "," + arr_num[1].charAt(0) + arr_num[1].charAt(1);
+	}
+	else
+	{
+		risultato = testo + ",00";
+	}
+	return risultato;
+}
+
+function ctrlCampoData(campo)
+{
+	var area = $("#"+campo);
+	var ret = checkData(area.val());
+	
+	if (ret != "0") area.val(ret);
+	else area.val("");
+}
+
+function checkData (testo)
+{
+	var nan;
+	if ((testo.length != 10) && (testo.length != 8))
+	{
+		alert ("La data non è corretta!");
+		return 0;
+	}
+	if (testo.length == 10) // può essere 12/12/2012
+	{
+		if (testo.charAt(2) == '/' && testo.charAt(5) == '/')
+		{
+			if (testo.charAt(0) >= '0' && testo.charAt(0) <= '3' &&
+				testo.charAt(1) >= '0' && testo.charAt(1) <= '9' &&
+				testo.charAt(3) >= '0' && testo.charAt(3) <= '1' &&
+				testo.charAt(4) >= '0' && testo.charAt(4) <= '9' &&
+				testo.charAt(6) >= '1' && testo.charAt(6) <= '2' &&
+				testo.charAt(7) >= '0' && testo.charAt(7) <= '9' &&
+				testo.charAt(8) >= '0' && testo.charAt(8) <= '9' &&
+				testo.charAt(9) >= '0' && testo.charAt(9) <= '9')
+			{
+				nan = parseInt(testo.charAt(0) + testo.charAt(1));
+				if (nan > 31) { alert ("La data non è corretta!"); return 0; }
+				nan = parseInt(testo.charAt(3) + testo.charAt(4));
+				if (nan > 12) { alert ("La data non è corretta!"); return 0; }
+				nan = parseInt(testo.charAt(6) + testo.charAt(7) + testo.charAt(8) + testo.charAt(9));
+				if ((nan < 1900) || (nan > 3000)) { alert ("La data non è corretta!"); return 0; }
+				return testo;
+			}
+		}
+		alert ("La data non è corretta!");
+		return 0;
+	}
+	else if (testo.length == 8) // può essere 12122012
+	{
+		if (testo.charAt(0) >= '0' && testo.charAt(0) <= '3' &&
+				testo.charAt(1) >= '0' && testo.charAt(1) <= '9' &&
+				testo.charAt(2) >= '0' && testo.charAt(2) <= '1' &&
+				testo.charAt(3) >= '0' && testo.charAt(3) <= '9' &&
+				testo.charAt(4) >= '1' && testo.charAt(4) <= '2' &&
+				testo.charAt(5) >= '0' && testo.charAt(5) <= '9' &&
+				testo.charAt(6) >= '0' && testo.charAt(6) <= '9' &&
+				testo.charAt(7) >= '0' && testo.charAt(7) <= '9')
+		{
+			nan = parseInt(testo.charAt(0) + testo.charAt(1));
+			if (nan > 31) { alert ("La data non è corretta!"); return 0; }
+			nan = parseInt(testo.charAt(2) + testo.charAt(3));
+			if (nan > 12) { alert ("La data non è corretta!"); return 0; }
+			nan = parseInt(testo.charAt(4) + testo.charAt(5) + testo.charAt(6) + testo.charAt(7));
+			if ((nan < 1900) || (nan > 3000)) { alert ("La data non è corretta!"); return 0; }
+			testo = testo.charAt(0) + testo.charAt(1) + '/' + testo.charAt(2) + testo.charAt(3) + '/' + testo.charAt(4) + testo.charAt(5) + testo.charAt(6) + testo.charAt(7);
+			return testo;
+		}
+		alert ("La data non è corretta!");
+		return 0;
+	}
+	else
+	{
+		alert ("La data non è corretta!");
+		return 0;
+	}
+}
+
+$(document).ready(function()
+{
+	$("#submit_click").click
+			( 
+					function SalvaPag ()
+					{
+						SalvataggioDato();
+					}
+			);
+});
+
+function SalvataggioDato ()
+{
+	if ($("#submit_click").attr("src") == "/gitco2/immagini/Save-iconF3grey.png") return false;
+
+	
+}
+
+function CheckCaratteri(names)
+{
+	var esitoCheck = true;
+	//var name = "[name="+names+"]";
+	var idcampo = $("[name=" + names + "]");
+	//alert ("[name=" + names + "]");
+	var testoId = idcampo.val();
+	/*alert (testoId);
+	if (testoId == "")
+	{
+		testoId = idcampo.val();  //  in IE si usa TEXT, in Firefox si usa VAL...
+	}
+	alert (testoId);*/
+
+	var lungTesto = testoId.length;
+	var testoNelCampo = "";
+	for (var i = 0; i < lungTesto; i++)
+	{
+		var carattere = CtrlLettereTesto(testoId.charAt(i), false);
+		if (carattere == "") esitoCheck = false;
+		else testoNelCampo += carattere;
+	}
+	idcampo.val(testoNelCampo);  //  in IE si usa TEXT, in Firefox si usa VAL...
+	//idcampo.text(testoNelCampo);
+	return esitoCheck;
+}
+
+
+function inizio()
+{
+	$('#progressbar').progressbar({
+		value: false
+	});
+	$( "#barlabel" ).text("Connessione a PEC...");
+}
+
+function update(valore)
+{
+	$( "#progressbar" ).progressbar({value: parseInt(valore) });
+	$( "#barlabel" ).text( valore + "%" );
+}
+
+function nessun_risultato()
+{
+	$( "#progressbar" ).progressbar({value: 100 });
+	$( "#barlabel" ).text("Nessun risultato trovato");
+}
+
+function fine(value)
+{
+	$( "#progressbar" ).progressbar({value: 100 });
+	$( "#barlabel" ).text( value );
+}
+
+function apri_file(value, value2)
+{
+	link="/gitco2/coattiva/modali/force-download.php?file="+value+"&filename="+value2;
+	
+	window.open(link);
+}
+
+</script>
+    
+</head>
+
+<body class="sfondo_new_gitco">
+
+<table class="table_azzurra text_center" style="height:7%;">
+	<tr>
+		<td width=1%><br></td>
+		<td class="text_left"></td>
+		<td class="text_right"><font class="user" ><?php echo $nome_user ?></font></td>
+		<td width=1%><br></td>
+	</tr>
+</table>
+
+<table height=93% class="table_azzurra text_center" border=0>
+<tr>
+<td valign=top>
+
+
+<?php include FATTURAZIONE . '/menu/menu_fatturazione.php'; ?>
+
+	<table class="table_interna text_center" border=0 cellspacing=4>
+	<tr>
+		<td class="text_center width7">
+			<a onMouseover="title='Modifica'" href="#" onClick="">
+			<img src="/gitco2/immagini/redF2grey.png" width=45 height=45 border=0>
+			</a>
+		</td>
+		<td class="text_center width7" >
+			<input id="submit_click" type="image" title="Salva" src="/gitco2/immagini/Save-iconF3grey.png" style="width:47px; height:47px; border:0;" />
+		</td>
+		<td class="text_center width7" >
+			<input id="delete_click" type="image" title="Elimina" src="/gitco2/immagini/delete-iconF4grey.png" style="width:47px; height:47px; border:0;" />
+		</td>
+		<td class="text_center width7" >
+			<a onMouseover="title='Annulla'" href="#" onClick="annulla();" style="text-decoration: none;">
+			<img src="/gitco2/immagini/undo.png" width=47 height=47 border=0>
+			</a>
+		</td>
+		<td class="text_center width7" >	
+			<a onMouseover="title='Nuovo Record'" href="#" onClick="nuovo_F6();" style="text-decoration: none;">
+			<img src="/gitco2/immagini/nuovo.png" width=45 height=45 border=0>
+			</a>
+		</td>
+		<td class="text_center width7" >
+			<a onMouseover="title='Pagina precedente'" href="#" onclick="" style="text-decoration: none;">
+			<img src="/gitco2/immagini/frecciagiugrey.png" width=47 height=47 border=0>
+			</a>
+		</td>
+		<td class="text_center width7" >
+			<a onMouseover="title='Pagina successiva'" href="#" onclick="" style="text-decoration: none;">
+			<img src="/gitco2/immagini/frecciasugrey.png" width=47 height=47 border=0>
+			</a>
+		</td>
+		<td class="text_center width7">
+          	<a href="#" onMouseover=" title='Record precedente F7' " onclick="cambia_pag('prev');"><img src="/gitco2/immagini/FrecciaS.png" width=42px height=42px border="0" alt="Utente precedente"></a>
+		</td>
+		<td class="text_center width7">
+          	<a href="#" onMouseover=" title='Record successivo F8' " onclick="cambia_pag('suc');"><img src="/gitco2/immagini/FrecciaD.png" width=42px height=42px border="0" alt="Utente successivo"></a>
+        </td>
+		<td class="text_center width11">
+          	
+        </td>
+		<td class="text_center width7">
+          	<a href="#" id="stampa_click" onMouseover=" title='Stampa F10' " onclick=""><img src="/gitco2/immagini/PrintF10grey.png" width=50px height=50px border="0" alt="Stampa Avviso"></a>
+        </td>
+		<td class="text_center width3">
+          	
+        </td>
+		<td class="text_center width7" >
+			<a onMouseover="title='Help'" href="#" onClick="window.open('/gitco2/help/intestazione.html','help','width=650,height=400,top=70,left=70,scrollbars=yes, menubar=yes');" style="text-decoration: none;">
+			<img src="/gitco2/immagini/help.png" width=50 height=50 border=0>
+			</a>
+		</td>
+		<td class="text_center width2"></td>
+		<td class="text_center width7">
+			<a onMouseover="title='Home'" href="#" onClick="link('menu');" style="text-decoration: none;">
+			<img src="/gitco2/immagini/home.png" width=60 height=50 border=0>
+			</a>
+		</td>
+	</tr>
+	</table>
+	
+	<table class="table_interna text_center" border=0 cellspacing=4>
+	<tr>
+		<td class="text_center width100">
+			<div class="table_interna text_center" id="progressbar" style="height:55px;">
+				<div class="text_center" id="barlabel">
+				</div>
+			</div>
+		</td>
+	</tr>
+	</table>
+		
+	<form id="email_form" name="email_form" action="<?=$questaPagina?>" method="post">
+		
+	<input type="hidden" name="c" value="<?php echo $c ?>">
+	<input type="hidden" name="a" value="<?php echo $a ?>">
+	
+		
+ 	<table class="table_interna text_center" border=0 style="border:3px solid #6D95D5;">
+	<tr class="pheight50">
+		<td class="width5 text_center">
+		</td>
+		<td class="width90 text_center">
+			<font class="titolo font18">ESITO FATTURE SU PEC</font>
+		</td>
+    	<td class="width5 text_center">
+        </td>
+	</tr>
+	</table>
+	
+	<table class='table_interna text_center' border='0'>
+	<tr class="pheight30 sfondo_new_gitco">
+		<td class="width5 text_center">
+			
+		</td>
+		<td class="width15 text_center">
+			<b>Num. Fattura</b>
+		</td>
+		<td class="width5 text_center">
+			<b>CC</b>
+		</td>
+		<td class="width15 text_center">
+			<b>Esito</b>
+		</td>
+		<td class="width20 text_center">
+			<b>Data Fattura</b>
+		</td>
+		<td class="width15 text_center">
+			<b>SDI</b>
+		</td>
+		<td class="width20 text_center">
+			<b>Tipo</b>
+		</td>
+		<td class="width10 text_center">
+			<b>Email</b>
+		</td>
+	</tr>
+	
+	<?php 
+	
+	echo "<script>inizio();</script>";
+	
+	flush();
+	ob_flush();
+	flush();
+	ob_flush();
+	
+	$par = new parametri_email("AAAA", "FATTURE", 'PEC');
+	
+	$imap = new Imap($par);
+	
+	$imap->selectFolder('INBOX');
+	
+	// print_r($imap->getFolders());
+	// die;
+	
+	
+	// stop on error
+	if($imap->isConnected()===false)
+	{
+		echo "ERROR ".$imap->getError();
+		die;
+	}
+	
+	$mittente = "noreply@fatturapa.pec.it";
+	
+	set_time_limit(500);
+	$emailRicevute = imap_search($imap->imap, 'FROM "' . $mittente . '"', SE_UID);
+	
+	$destinazioneEmail = crea_dir($PathCompletoFatture . "/PEC/");
+	$myInvio = new fatture_invii(null);
+	
+	$stileriga = "sfondo_grigio";
+	
+	if (count($emailRicevute) != 0 && $emailRicevute[0] != "")
+	{
+		for ($kkk = 0; $kkk < count($emailRicevute); $kkk++)
+		{
+			if ($emailRicevute[$kkk] == "")
+				continue;
+			
+			if ($stileriga == "sfondo_grigio") $stileriga = "riga_dispari";
+			else $stileriga = "sfondo_grigio";
+			
+			echo "<script>update(".ceil($kkk*100/count($emailRicevute)).");</script>";
+			
+			set_time_limit(300);
+			
+			$salvaDbEmail = "";
+			$salvaEmail = "";
+			$iconaEmail = "/gitco2/immagini/puntointerrogativo.jpg";
+			
+			flush();
+			ob_flush();
+			flush();
+			ob_flush();
+		
+			$msgno = imap_msgno($imap->imap, $emailRicevute[$kkk]);
+			$num = $kkk +1;
+			$header = imap_headerinfo($imap->imap, $msgno);
+			//echo "<br>$num " . $header->Subject;
+		
+			$testo = imap_fetchbody($imap->imap, $msgno,'');
+			
+			$dataMessaggio = CercaVoce ($testo, "SigningTime>", "Z");  //  esce 2015-05-12T23:32:37
+			$dataMessaggio = substr($dataMessaggio, 0, 10);  //  prendo i primi 10 caratteri 2015-05-12
+			$identificativoID = CercaVoce ($testo, "IDENTIFICATIVO SDI ", "");
+			$tipoMessaggio = CercaVoce ($testo, "TIPO MESSEGGIO ", "");
+			$tipoMessaggio = str_replace(" ", "_", $tipoMessaggio);
+			
+			if ($identificativoID != "" && $tipoMessaggio != "")
+			{
+				switch ($tipoMessaggio)
+				{
+					case "Notifica_esito":
+						$esitoFattura = CercaVoce ($testo, "<Esito>", "<");
+						$numFattura = CercaVoce ($testo, "NUM. FATTURA ", "");
+						$numFattura = str_replace("/", "-", $numFattura);
+						$iconaEmail = "/gitco2/immagini/giallojpg.JPG";
+						if ($identificativoID != "" && $tipoMessaggio != "")
+						{
+							$invioID = $myInvio->CercaInvioDaSDI($identificativoID);
+							$myInvio = new fatture_invii($invioID);
+							$myFattura = new fatture_generali($myInvio->Fattura_ID);
+								
+							switch ($esitoFattura)
+							{
+								case "EC01": $scrittaEsito = "ACCETTATA"; $iconaEmail = "/gitco2/immagini/verdejpg.JPG"; break;
+								case "EC02": $scrittaEsito = "RIFIUTATA"; $iconaEmail = "/gitco2/immagini/rossojpg.JPG"; break;
+								case "": $scrittaEsito = ""; break;
+								default: $scrittaEsito = "SCONOSCIUTA"; break;
+							}
+							
+							$nome_file = $identificativoID . "_" . $tipoMessaggio . ".eml";
+							if ($myFattura->ID != "")
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= $myFattura->Fat_Tipo . "__";
+								$nome_file .= $myFattura->ID . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = $myFattura->ID;
+								$dbIdentificativo_SDI = $myInvio->Identificativo_SDI;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = $scrittaEsito;
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $myFattura->Fat_Numero;
+						
+								$htmlNumFattura = $myFattura->Fat_Numero;
+								$htmlComune = $myFattura->Fat_Comune;
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($myFattura->Fat_Data);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+							else
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= "SCONOSCIUTA__";
+								$nome_file .= $numFattura . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+								
+								$dbFattura_ID = "";
+								$dbIdentificativo_SDI = $identificativoID;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = $scrittaEsito;
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $numFattura;
+						
+								$htmlNumFattura = "<font color='red'>$numFattura</font>";
+								$htmlComune = "";
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($dataMessaggio);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+						}
+						break;
+					case "Ricevuta_di_consegna":
+						$esitoFattura = "";
+						$numFattura = "";
+						$iconaEmail = "/gitco2/immagini/giallojpg.JPG";
+						if ($identificativoID != "" && $tipoMessaggio != "")
+						{
+							$invioID = $myInvio->CercaInvioDaSDI($identificativoID);
+							$myInvio = new fatture_invii($invioID);
+							$myFattura = new fatture_generali($myInvio->Fattura_ID);
+								
+							$nome_file = $identificativoID . "_" . $tipoMessaggio . ".eml";
+							if ($myFattura->ID != "")
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= $myFattura->Fat_Tipo . "__";
+								$nome_file .= $myFattura->ID . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = $myFattura->ID;
+								$dbIdentificativo_SDI = $myInvio->Identificativo_SDI;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $myFattura->Fat_Numero;
+								
+								$htmlNumFattura = $myFattura->Fat_Numero;
+								$htmlComune = $myFattura->Fat_Comune;
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($myFattura->Fat_Data);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+							else
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= "SCONOSCIUTA__";
+								$nome_file .= $numFattura . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = "";
+								$dbIdentificativo_SDI = $identificativoID;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $numFattura;
+								
+								$htmlNumFattura = "<font color='red'>$numFattura</font>";
+								$htmlComune = "";
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($dataMessaggio);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+						}
+						break;
+					case "Notifica_di_mancata_consegna":
+						$esitoFattura = "";
+						$numFattura = "";
+						$iconaEmail = "/gitco2/immagini/rossojpg.JPG";
+						
+						// con notifica mancata consegna non c'è il campo SIGNINGTIME
+						$dataMessaggio = CercaVoce ($testo, "DATA ORA RICEZIONE ", "");  //  esce 2015-05-11T11:05:57.000+02:00
+						$dataMessaggio = substr($dataMessaggio, 0, 10);  //  prendo i primi 10 caratteri 2015-05-12
+						if ($identificativoID != "" && $tipoMessaggio != "")
+						{
+							$invioID = $myInvio->CercaInvioDaSDI($identificativoID);
+							$myInvio = new fatture_invii($invioID);
+							$myFattura = new fatture_generali($myInvio->Fattura_ID);
+								
+							$nome_file = $identificativoID . "_" . $tipoMessaggio . ".eml";
+							if ($myFattura->ID != "")
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= $myFattura->Fat_Tipo . "__";
+								$nome_file .= $myFattura->ID . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = $myFattura->ID;
+								$dbIdentificativo_SDI = $myInvio->Identificativo_SDI;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $myFattura->Fat_Numero;
+								
+								$htmlNumFattura = $myFattura->Fat_Numero;
+								$htmlComune = $myFattura->Fat_Comune;
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($myFattura->Fat_Data);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+							else
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= "SCONOSCIUTA__";
+								$nome_file .= $numFattura . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = "";
+								$dbIdentificativo_SDI = $identificativoID;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $numFattura;
+								
+								$htmlNumFattura = "<font color='red'>$numFattura</font>";
+								$htmlComune = "";
+								$htmlEsito = $esitoFattura;
+								$htmlData = "";  // from_mysql_date($dataMessaggio);  //  non arriva la data
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+						}
+						break;
+					case "Notifica_di_decorrenza_termini":
+						$esitoFattura = "";
+						$numFattura = "";
+						$iconaEmail = "/gitco2/immagini/verdetempojpg.JPG";
+						if ($identificativoID != "" && $tipoMessaggio != "")
+						{
+							$invioID = $myInvio->CercaInvioDaSDI($identificativoID);
+							$myInvio = new fatture_invii($invioID);
+							$myFattura = new fatture_generali($myInvio->Fattura_ID);
+								
+							$nome_file = $identificativoID . "_" . $tipoMessaggio . ".eml";
+							if ($myFattura->ID != "")
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= $myFattura->Fat_Tipo . "__";
+								$nome_file .= $myFattura->ID . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = $myFattura->ID;
+								$dbIdentificativo_SDI = $myInvio->Identificativo_SDI;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $myFattura->Fat_Numero;
+								
+								$htmlNumFattura = $myFattura->Fat_Numero;
+								$htmlComune = $myFattura->Fat_Comune;
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($myFattura->Fat_Data);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+							else
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= "SCONOSCIUTA__";
+								$nome_file .= $numFattura . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = "";
+								$dbIdentificativo_SDI = $identificativoID;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $numFattura;
+								
+								$htmlNumFattura = "<font color='red'>$numFattura</font>";
+								$htmlComune = "";
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($dataMessaggio);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+						}
+						break;
+					case "Notifica_di_scarto":
+						$esitoFattura = "";
+						$numFattura = "";
+						$iconaEmail = "/gitco2/immagini/rossojpg.JPG";
+						if ($identificativoID != "" && $tipoMessaggio != "")
+						{
+							$invioID = $myInvio->CercaInvioDaSDI($identificativoID);
+							$myInvio = new fatture_invii($invioID);
+							$myFattura = new fatture_generali($myInvio->Fattura_ID);
+								
+							$nome_file = $identificativoID . "_" . $tipoMessaggio . ".eml";
+							if ($myFattura->ID != "")
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= $myFattura->Fat_Tipo . "__";
+								$nome_file .= $myFattura->ID . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = $myFattura->ID;
+								$dbIdentificativo_SDI = $myInvio->Identificativo_SDI;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $myFattura->Fat_Numero;
+								
+								$htmlNumFattura = $myFattura->Fat_Numero;
+								$htmlComune = $myFattura->Fat_Comune;
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($myFattura->Fat_Data);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+							else
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= "SCONOSCIUTA__";
+								$nome_file .= $numFattura . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = "";
+								$dbIdentificativo_SDI = $identificativoID;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $numFattura;
+								
+								$htmlNumFattura = "<font color='red'>$numFattura</font>";
+								$htmlComune = "";
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($dataMessaggio);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+						}
+						break;
+					default:
+						$esitoFattura = "";
+						$numFattura = "";
+						if ($identificativoID != "" && $tipoMessaggio != "")
+						{
+							$invioID = $myInvio->CercaInvioDaSDI($identificativoID);
+							$myInvio = new fatture_invii($invioID);
+							$myFattura = new fatture_generali($myInvio->Fattura_ID);
+								
+							$nome_file = $identificativoID . "_" . $tipoMessaggio . ".eml";
+							if ($myFattura->ID != "")
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= $myFattura->Fat_Tipo . "__";
+								$nome_file .= $myFattura->ID . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = $myFattura->ID;
+								$dbIdentificativo_SDI = $myInvio->Identificativo_SDI;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $myFattura->Fat_Numero;
+								
+								$htmlNumFattura = $myFattura->Fat_Numero;
+								$htmlComune = $myFattura->Fat_Comune;
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($myFattura->Fat_Data);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+							else
+							{
+								/*$nome_file = $identificativoID . "_" . $tipoMessaggio . "_";
+								$nome_file .= "SCONOSCIUTA__";
+								$nome_file .= $numFattura . ".eml";*/
+								
+								$nome_completo_file = $destinazioneEmail . $nome_file;
+								$salvaEmail = "SI";
+								$salvaDbEmail = "SI";
+						
+								$dbFattura_ID = "";
+								$dbIdentificativo_SDI = $identificativoID;
+								$dbData_Ricezione = $dataMessaggio;
+								$dbEsito = "";
+								$dbTipo_Messaggio = $tipoMessaggio;
+								$dbNome_File_Email = $nome_file;
+								$dbNome_Fattura = $numFattura;
+								
+								$htmlNumFattura = "<font color='red'>$numFattura</font>";
+								$htmlComune = "";
+								$htmlEsito = $esitoFattura;
+								$htmlData = from_mysql_date($dataMessaggio);
+								$htmlIdentif = $identificativoID;
+								$htmlTipoMsg = $tipoMessaggio;
+								$htmlImg = "<img href='#' src='/gitco2/immagini/email.gif' class='pwidth15 pheight15' onclick=\"apri_file('$nome_completo_file','$nome_file');\">";
+							}
+						}
+						$stileriga = " sfondo_rosso ";
+						break;
+				}
+			}
+			else
+			{
+				alert ("Identificativo: " . $identificativoID . " e tipo " . $tipoMessaggio);
+				//if ($salvaEmail == "SI")
+				{
+					$nome_completo_file = $destinazioneEmail . "errore.eml";
+					$myfile = fopen($nome_completo_file, 'w');
+					fwrite($myfile, $testo);
+					fclose($myfile);
+				}
+				return;
+			}
+			
+			if ($salvaDbEmail == "SI")
+			{
+				$myEmail = new fatture_email(null);
+				$myEmail->AutoGenerazioneTable();
+				//$myEmail->ID;
+				//$myEmail->Fattura_ID = $dbFattura_ID;
+				$myEmail->Identificativo_SDI = $dbIdentificativo_SDI;
+				$myEmail->Data_Ricezione = $dbData_Ricezione;
+				$myEmail->Esito = $dbEsito;
+				$myEmail->Tipo_Messaggio = $dbTipo_Messaggio;
+				$myEmail->Nome_File_Email = $dbNome_File_Email;
+				$myEmail->Nome_Fattura = $dbNome_Fattura;
+				$myEmail->InsertUpdateEmail();
+			}
+			
+			if ($salvaEmail == "SI")
+			{
+				$myfile = fopen($nome_completo_file, 'w');
+				fwrite($myfile, $testo);
+				fclose($myfile);
+				
+				//aggiungere cancellazione email
+				imap_delete($imap->imap, $emailRicevute[$kkk], FT_UID);//CANCELLA DEFINITIVO
+				imap_expunge($imap->imap);
+			}
+			
+			if ($identificativoID == "" || $tipoMessaggio == "")
+			{
+				$htmlNumFattura = "<font color='red'>$numFattura</font>";
+				$htmlComune = "<font color='red'>errore</font>";
+				$htmlEsito = "<font color='red'>$esitoFattura;</font>";
+				$htmlData = "<font color='red'>" . from_mysql_date($dataMessaggio) . "</font>";
+				$htmlIdentif = "<font color='red'>$identificativoID</font>";
+				$htmlTipoMsg = "<font color='red'>$tipoMessaggio</font>";
+				$htmlImg = "";
+				$stileriga = " sfondo_rosso ";
+			}
+			
+			//echo "<br>--$htmlEsito--<br>";
+			switch ($htmlEsito)
+			{
+				case "EC01": $htmlEsito = "<font color='green'>OK</font>"; break;
+				case "EC02": $htmlEsito = "<b><font color='black'>NO</font></b>"; break;
+				case "": $htmlEsito = ""; break;
+				default: $htmlEsito = "<font color='red'>$htmlEsito</font>"; break;
+			}
+			
+			$iconaEmail = "<img href='#' src='$iconaEmail' class='pwidth15 pheight15'>";
+			
+			?>
+			
+				<tr class="pheight25 <?=$stileriga?>">
+					<td class="text_center">
+						<?=$num?>
+					</td>
+					<td class="text_center">
+						<?=$htmlNumFattura?>
+					</td>
+					<td class="text_center">
+						<?=$htmlComune?>
+					</td>
+					<td class="text_center">
+						<?php echo $iconaEmail ?> <!--<?=$htmlEsito?>-->
+					</td>
+					<td class="text_center">
+						<?=$htmlData?>
+					</td>
+					<td class="text_center">
+						<?=$htmlIdentif?>
+					</td>
+					<td class="text_center">
+						<?=$htmlTipoMsg?>
+					</td>
+					<td class="text_center">
+						<?=$htmlImg?>
+					</td>
+				</tr>
+			
+			<?php 
+			
+			//break;
+		}  //  fine for
+	}  //  fine if zero
+	else
+	{
+		?>
+		
+		<tr class="pheight25 <?=$stileriga?>">
+			<td class="text_center" colspan="8">
+				Non ci sono email da scaricare
+			</td>
+		</tr>
+		
+		<?php 
+	}
+	
+	?>
+	
+	</table>
+	
+	<script>
+	fine ("Controllo PEC terminata");
+	</script>
+			
+</form>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

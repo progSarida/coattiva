@@ -1,0 +1,67 @@
+
+
+<div class="row" style="border-bottom: 1px solid grey;padding-bottom:1rem">
+  <div class="col-sm-3" >
+    <b>TOTALE SPESE ACCESSORIE</b>
+  </div>
+
+  <div class="col-sm-3" >
+    <input readonly id="Totale_Rimborso" name="Totale_Rimborso" class="sfondo_azzurro text-right" style="width:10rem"
+    value="{{pignoramento.Totale_Rimborso|number_format(2, ',', '')}}" > <b>&euro;</b>
+  </div>
+  <div class="col-sm-6 text-right" >
+    <b>Incremento del <span style="color:red">{{pignoramento.Incremento_Percentuale}} %</span> 
+    delle spese con coefficiente di applicazione per il credito di <span style="color:red">{{pignoramento.Importo_Dovuto|number_format(2, ',', '')}} &euro;</span></b>
+  </div>
+</div>
+
+
+{% for key, spesa in spese %}
+<div class="row" style="margin-top:1rem;">
+  <div class="col-sm-1" >
+    <b style="color:red">SPESA {{key}}</b>
+  </div>
+  <div class="col-sm-2" >
+    <input readonly name="Spese[{{key}}]['Rimborso']" class="sfondo_azzurro text-right" style="width:10rem"
+    value="{{spesa.Rimborso|number_format(2, ',', '')}}" > <b>&euro;</b>
+  </div>
+  <div class="col-sm-8" >
+    <select id="Spesa_{{key}}" name="Spese[{{key}}]['Spesa_ID']" style="width:70rem" disabled>
+      {{spesa.optTariffa|raw}}
+    </select>
+  </div>
+  <div class="col-sm-1" >
+    <select id="Spesa_{{key}}" name="Spese[{{key}}]['Tipo_Totale']" style="width:9rem" disabled>
+      {{spesa.optTipoTotale|raw}}
+    </select>
+  </div>
+</div>
+<div class="row" style="border-bottom: 1px solid grey;padding-bottom:1rem;padding-top:2px">
+  <div class="col-sm-1" >
+    <b>TARIFFA</b>
+  </div>
+  <div class="col-sm-3" >
+    <input readonly class="sfondo_azzurro text-right" style="width:10rem"
+    value="{{spesa.Importo_Base|number_format(2, ',', '')}}" > <b>&euro;</b>
+    {% if spesa.Tipo_Spesa != "UNA TANTUM" %}
+      <b>per i primi {{spesa.Giorni_Base}} gg/km</b>
+    {% endif %}
+  </div>
+  <div class="col-sm-3" >
+    {% if spesa.Importo_Base>0 and spesa.Tipo_Spesa != "UNA TANTUM" %}
+      <b> + ( </b>
+      <input class="text-right" style="width:5rem"
+      value="{{spesa.Extra_Spesa|number_format(0, ',', '')}}" > <b>gg/km</b>
+      <b> * </b>
+      <input readonly class="sfondo_azzurro text-right" style="width:10rem"
+      value="{{spesa.Importo_Extra|number_format(2, ',', '')}}" > <b>&euro;</b>
+      <b> ) </b>
+    {% endif %}
+  </div>
+</div>
+
+
+{% endfor %}
+<br><br>
+
+   

@@ -1,0 +1,569 @@
+<?php
+
+require $_SERVER['DOCUMENT_ROOT'] . "/Gitco2/percorsi.php";
+include_once LIBRERIE . "/funzioni.php";
+include_once LIBRERIE . "/aiuto.php";
+include_once CLASSI . "/motivi_mancata_contestazione_cds.php";
+
+class flussi
+{
+	public $myCartella;  //  in formato C:/blabla/blabla/.../
+	public $myFlusso;  //  solitamente in formato flusso_verbali_A658_1_2014-07-16_12-06-17.txt
+	public $myPrefisso;
+	public $myTipo;
+	public $myComune;
+	public $myAnno;
+	public $myNumero;
+	public $myData;
+	public $myOra;
+	public $myEstensione;
+	
+	public $arrayImmaginiNelRar;
+	
+	public $myRigheTotali = 0;
+	public $myCampiTotali = 0;
+	
+	public function __construct($cartella = NULL, $fl = NULL, $tipo = NULL, $comune = NULL, $anno = NULL, $numero = NULL, $data = NULL, $ora = NULL, $est = NULL)
+	{
+		if ($cartella == NULL) return;
+				
+		$control_numero = explode(" ", $numero);
+		if($control_numero[0] == "ultimoFlusso") 
+		{
+			$numero = $this->ultimoFlusso($control_numero[1], $anno);
+		}
+		else 
+		{
+			$tempEsteri = $_SERVER['DOCUMENT_ROOT'] . "archivio/Targhe_Estere/Flussi/Definitivi/";
+			$tempAtti = $_SERVER['DOCUMENT_ROOT'] . "archivio/atti/";
+			
+			$percorso = "";
+			if ($cartella == $tempEsteri) $percorso = "ESTERI";
+			if ($cartella == $tempAtti) $percorso = "ATTI";
+			
+			switch ($percorso)
+			{
+				case "ESTERI":
+					$numero = $this->TrovaProssimoFlussoTargheEstere($anno);
+					break;
+					
+				default:
+					alert ("Errore cartella: default 0");
+					$numero = 0;
+					break;
+			}
+		}		
+		
+		$this->SetNomeFlusso ($cartella, $fl, $tipo, $comune, $anno, $numero, $data, $ora, $est);
+		
+		//$this->ScompattaNomeFlusso ($file);
+		
+		$file = $cartella . $fl . "_" . $tipo . "_" . $comune . "_" . $anno . "_" . $numero . "_" . $data . "_" . $ora . "." . $est;
+
+		$this->myFlusso = fopen ($file, "w+");
+	}
+	
+	public function SetNomeFlusso ($cartella, $fl, $tipo, $comune, $anno, $numero, $data, $ora, $est)
+	{
+		$this->myCartella = $cartella;
+		$this->myPrefisso = $fl;
+		$this->myTipo = $tipo;
+		$this->myComune = $comune;
+		$this->myAnno = $anno;
+		$this->myNumero = $numero;
+		$this->myData = $data;
+		$this->myOra = $ora;
+		$this->myEstensione = $est;
+	}
+	
+	public function GetNomeFlusso ()
+	{
+		$file = $this->myCartella;
+		$file .= $this->myPrefisso . "_";
+		$file .= $this->myTipo . "_";
+		$file .= $this->myComune . "_";
+		$file .= $this->myAnno . "_";
+		$file .= $this->myNumero . "_";
+		$file .= $this->myData . "_";
+		$file .= $this->myOra . ".";
+		$file .= $this->myEstensione;
+		return $file;
+	}
+	
+	public function ScompattaNomeFlusso ($file)
+	{
+		$explodePunto = explode (".", $file);
+		$this->myEstensione = $explodePunto[1];
+		
+		$i = 0;
+		$explode = explode ("_", $explodePunto[0]);
+		
+		$this->myPrefisso = $explode[$i++];
+		$this->myTipo = $explode[$i++];
+		$this->myComune = $explode[$i++];
+		$this->myAnno = $explode[$i++];
+		$this->myNumero = $explode[$i++];
+		$this->myData = $explode[$i++];
+		if (isset($explode[$i])) $this->myOra = $explode[$i++];
+		else $this->myOra = "";
+		$this->myRigheTotali = 0;
+	}
+	
+	public function ScompattaNomeRarFlusso ($file)
+	{
+		$explodePunto = explode (".", $file);
+		$this->myEstensione = $explodePunto[1];
+		
+		$i = 0;
+		$explode = explode ("_", $explodePunto[0]);
+		
+		$this->myPrefisso = $explode[$i++];
+		$this->myTipo = $explode[$i++];
+		$this->myComune = $explode[$i++];
+		$this->myAnno = $explode[$i++];
+		$this->myNumero = $explode[$i++];
+		$this->myRigheTotali = $explode[$i++];
+		$this->myData = "";
+		$this->myOra = "";
+	}
+	
+	public function TrovaProssimoFlussoTargheEstere ($anno)
+	{
+		$queryNumFlusso = "SELECT max(Numero_Flusso) as MAX FROM targhe_estere_notifiche";
+		$queryNumFlusso .= " WHERE Anno = " . $anno;
+		$resNumFlusso = mysql_query($queryNumFlusso);
+		$rigaNumFlusso = mysql_fetch_assoc($resNumFlusso);
+		$prossimo = $rigaNumFlusso['MAX'] + 1;
+		$this->myNumero = $prossimo;
+		return $prossimo;
+	}
+	
+	public function ultimoFlusso ($tabella, $anno)
+	{
+		$query = "SELECT max(Numero_Flusso) FROM ".$tabella." WHERE Anno_Flusso = '".$anno."'";
+		$num_flusso = single_query($query);
+		
+		$num_flusso = $num_flusso + 1;
+
+		$this->myNumero = $num_flusso;
+		
+		return $num_flusso;
+	}
+	
+	public function TrovaQuestoFlusso ($cartella, $comune, $anno, $numero)
+	{
+		$handle = opendir($cartella);
+		while (($file = readdir($handle)) != false)
+		{
+			if ($file != "." && $file != ".." && $file != "thumbs.db" && 
+				$file != "Flussi_Spediti_A_Mercurio.xls" &&
+				substr($file, 0, strlen("NotificheImportate_")) != "NotificheImportate_")
+			{
+				$this->ScompattaNomeFlusso ($file);
+				if (strtoupper($this->myEstensione) == "TXT" &&
+					$this->myComune == $comune &&
+					$this->myAnno == $anno &&
+					$this->myNumero == $numero)
+				{
+					closedir($handle);
+					return $file;
+				}
+			}
+		}
+		closedir($handle);
+		return NULL;
+	}
+	
+	public function TrovaQuestoRarFlusso ($cartella, $comune, $anno, $numero)
+	{
+		$handle = opendir($cartella);
+		while (($file = readdir($handle)) != false)
+		{
+			if ($file != "." && $file != ".." && $file != "thumbs.db" &&
+				$file != "Flussi_Spediti_A_Mercurio.xls" &&
+				substr($file, 0, strlen("NotificheImportate_")) != "NotificheImportate_")
+			{
+				$this->ScompattaNomeRarFlusso ($file);
+				if (strtoupper($this->myEstensione) == "RAR" &&
+					$this->myComune == $comune &&
+					$this->myAnno == $anno &&
+					$this->myNumero == $numero)
+				{
+					closedir($handle);
+					return $file;
+				}
+			}
+		}
+		closedir($handle);
+		return NULL;
+	}
+	
+	public function TrovaListaFlussiOdierni ($cartella, $fl, $tipo, $comune)
+	{
+		$arrayFlussi = array();
+		$dataSqlOdierna = date ("Y-m-d");
+		$prefisso = $fl . "_" . $tipo . "_" . $comune;
+		$lungFissa = strlen($prefisso);
+		$handle = opendir($cartella);
+		while (($file = readdir($handle)) != false)
+		{
+			//echo "<br>" . $file;
+			if (substr($file, 0, $lungFissa) == $prefisso)
+			{
+				$esplodoEstensione = explode (".", $file);
+				$senzaEstens = $esplodoEstensione[0];
+				//$secondaParteNome = substr($file, $lungFissa);
+				$esplodoTrattini = explode ("_", $senzaEstens);
+				$totPezzi = count($esplodoTrattini);
+				$dataFile = $esplodoTrattini[$totPezzi-2];  //  il penultimo � la data
+				if ($dataFile == $dataSqlOdierna)
+				{
+					$arrayFlussi[] = $file;
+				}
+			}
+			//alert ("cip");
+		}
+		closedir($handle);
+		return $arrayFlussi;
+	}
+
+//	function addFlowElement($element){
+//        fwrite ($this->myFlusso, $element . Chr(9));  //  TAB
+//    }
+//
+//    function addFlowLine($a_line){
+//        for ($i = 0; $i < count($a_line); $i++)
+//        {
+//            $this->addFlowElement($a_line[$i]);
+//            $this->myRigheTotali++;
+//        }
+//    }
+//
+//    function addFlowHeader($a_line){
+//
+//    }
+
+	function AggiungiIntestazioneFlusso ($arrayFFlusso)
+	{
+		for ($i = 0; $i < count($arrayFFlusso); $i++)
+		{
+			fwrite ($this->myFlusso, strtoupper($arrayFFlusso[$i]) . Chr(9));  //  TAB
+			$this->myCampiTotali ++;
+		}
+		fwrite ($this->myFlusso, Chr(13) . Chr(10));  //  fine riga
+	}
+	 
+	function AggiungiRigaFlusso ($arrayFFlusso)
+	{
+		for ($i = 0; $i < count($arrayFFlusso); $i++)
+		{
+			fwrite ($this->myFlusso, $arrayFFlusso[$i] . Chr(9));  //  TAB
+		}
+		fwrite ($this->myFlusso, Chr(13) . Chr(10));  //  fine riga
+		$this->myRigheTotali++;
+		
+		if ($i != $this->myCampiTotali)
+			alert ("Il numero di campi della riga ($i) e' diverso dal numero di campi dell'intestazione " . $this->myCampiTotali . "!");
+	}
+	function AllegaImmagine ($immagine)  //  in formato C:/program...../img.jpg
+	{
+		for ($i = 0; $i < count($this->arrayImmaginiNelRar); $i++)
+		{
+			if ($this->arrayImmaginiNelRar[$i] == $immagine)
+			{
+				return;
+			}
+		}
+		$this->arrayImmaginiNelRar[] = $immagine;
+	}
+	 
+	function ChiudiFlusso ()
+	{
+		fclose($this->myFlusso);
+		
+		if ($this->myRigheTotali == 0)
+		{
+			$link = $this->GetNomeFlusso();
+			//alert ($link);
+			unlink ($link);
+			return;
+		}
+		
+		$fileTxt = $this->myPrefisso . "_";
+		$fileTxt .= $this->myTipo . "_";
+		$fileTxt .= $this->myComune . "_";
+		$fileTxt .= $this->myAnno . "_";
+		$fileTxt .= $this->myNumero . "_";
+		$fileTxt .= $this->myData . "_";
+		$fileTxt .= $this->myOra;
+		
+		$nomeRar = $this->myPrefisso . "_";
+		$nomeRar .= $this->myTipo . "_";
+		$nomeRar .= $this->myComune . "_";
+		$nomeRar .= $this->myAnno . "_";
+		$nomeRar .= $this->myNumero . "_";
+		$nomeRar .= $this->myRigheTotali;
+		
+		$lunghRoot = strlen ($_SERVER['DOCUMENT_ROOT']);
+		
+		$percorsoRar = substr ($this->myCartella, $lunghRoot-1);  //  la funz del rar NON vuole c:/program....
+		
+		$rit = crea_file_rar($fileTxt, $this->myCartella, 0, $nomeRar, "." . $this->myEstensione);
+		
+		if ($rit != "" && count($this->arrayImmaginiNelRar) != 0)
+		{
+			for ($i = 0; $i < count($this->arrayImmaginiNelRar); $i++)
+			{
+				//alert ($this->arrayImmaginiNelRar[$i]);
+				//alert ($this->GetNomeFlusso());
+				//alert ($nomeRar);
+
+				aggiungi_file_rar($this->arrayImmaginiNelRar[$i], $this->myCartella, $rit);
+			}
+		}
+		
+		$myFluxTab = new flussi_tabella(null);
+		switch ($this->myTipo)
+		{
+			case "verbali": $myFluxTab->Tipo = "V_EST"; break;
+			case "avvisi": $myFluxTab->Tipo = "AV_INT"; break;
+			case "ingiunzioni": $myFluxTab->Tipo = "ING"; break;
+			case "pigno_banca": $myFluxTab->Tipo = "PIGNO_BANCA"; break;
+			case "pigno_veicolo": $myFluxTab->Tipo = "PIGNO_VEICOLO"; break;
+            case "pigno_lavoro": $myFluxTab->Tipo = "PIGNO_LAVORO"; break;
+			default: alert ("il tipo flusso non e' gestito in flussi.php"); $myFluxTab->Tipo = ""; break;
+		}
+		
+		$myFluxTab->CC_Comune = $this->myComune;
+		$myFluxTab->Anno = $this->myAnno;
+		$myFluxTab->Num_Flusso = $this->myNumero;
+		$myFluxTab->Num_Righe = $this->myRigheTotali;
+		$myFluxTab->Data_Flusso = $this->myData;
+		$myFluxTab->Nome_Flusso = $fileTxt . "." . $this->myEstensione;
+		$myFluxTab->Nome_Flusso_Rar = $nomeRar . ".rar";
+		$myFluxTab->Data_Travaso_Verso_Gitco = '0000-00-00';
+		
+		$myFluxTab->InsertUpdateFlussoTab();
+	}
+}
+
+
+/*
+ * CREATE TABLE `flussi_tabella` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Tipo` varchar(10) NOT NULL,
+  `CC_Comune` varchar(5) NOT NULL,
+  `Anno` int(4) NOT NULL,
+  `Num_Flusso` int(4) NOT NULL,
+  `Num_Righe` int(5) NOT NULL,
+  `Data_Flusso` date default '0000-00-00',
+  `Nome_Flusso` varchar(10) NOT NULL,
+  `Nome_Flusso_Rar` varchar(10) NOT NULL,
+  `Data_Travaso_Verso_Gitco` date default '0000-00-00',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+ */
+
+class flussi_tabella
+{
+	public $ID;
+	public $Tipo;
+	public $CC_Comune;
+	public $Anno;
+	public $Num_Flusso;
+	public $Num_Righe;
+	public $Data_Flusso;
+	public $Nome_Flusso;
+	public $Nome_Flusso_Rar;
+	public $Data_Travaso_Verso_Gitco;
+	
+	public function __construct ($progr)
+	{
+		if ($progr == NULL) return;
+			
+		$query = "SELECT * FROM flussi_tabella WHERE ID = '" . $progr . "' ";
+		$result = mysql_query($query);		
+		$rigaFlussi = mysql_fetch_assoc($result);
+		
+		if (mysql_num_rows($result) > 0)
+		{
+			foreach ($rigaFlussi as $key => $value)
+			{
+				$this->$key = $value;
+			}
+		}
+	}
+	
+	public function FlussoGiaPresente ()
+	{
+		$queryCerca = "SELECT ID FROM flussi_tabella ";
+		$queryCerca .= "WHERE Tipo = '" . $this->Tipo . "' ";
+		$queryCerca .= "AND CC_Comune = '" . $this->CC_Comune . "' ";
+		$queryCerca .= "AND Anno = '" . $this->Anno . "' ";
+		$queryCerca .= "AND Num_Flusso = '" . $this->Num_Flusso . "' ";
+		//echo "<br>" . $queryCerca;
+		$resCerca = mysql_query($queryCerca);
+		$rigaCerca = mysql_fetch_assoc($resCerca);
+		return $rigaCerca['ID'];
+	}
+	
+	public function CheckTipo ()
+	{
+		switch ($this->Tipo)
+		{
+			case "V_EST"; break;
+			case "AV_INT"; break;
+			case "ING"; break;
+            case "SOLL_PRE"; break;
+            case "AV_MORA"; break;
+			case "PIGNO_BANCA"; break;
+			case "PIGNO_VEICOLO"; break;
+            case "PIGNO_LAVORO"; break;
+			default:
+				alert ("il tipo flusso non e' gestito dalla classe in flussi.php");
+
+				return false;
+				break;
+		}
+		return true;
+	}
+	
+	public function InsertUpdateFlussoTab ($forzoInsertUpdate = NULL)
+	{
+		if ($this->CheckTipo() == false) return;
+		
+		$insUpd = "";
+		$fields = array();
+		$values = array();
+	
+		if ($forzoInsertUpdate != NULL)
+		{
+			$insUpd = $forzoInsertUpdate;
+		}
+		else
+		{
+			$this->ID = $this->FlussoGiaPresente();
+	
+			if ($this->ID == NULL)
+			{
+				$insUpd = "INSERT";
+			}
+			else
+			{
+				$queryUpd = "SELECT ID FROM flussi_tabella WHERE ID = '$this->ID'";
+				$resUpd = mysql_query($queryUpd);
+				$rigaUpd = mysql_fetch_assoc($resUpd);
+				//alert ($queryUpd);
+				if ($rigaUpd['ID'] == NULL)
+					$insUpd = "INSERT";
+				else
+					$insUpd = "UPDATE";
+			}
+		}
+	
+		foreach ($this as $campo => $valore)
+		{
+			if (isset($campo) && $campo != "ID")
+			{
+				$fields[] = $campo;
+				$values[] = $valore;
+			}
+		}
+	
+		$risposta = "";
+		if ($insUpd == "INSERT")
+		{
+			$risposta = $this->insert_flusso_locale($fields, $values);
+			switch ($risposta)
+			{
+				case true: $risposta = "INSERT_OK"; break;
+				case false: $risposta = "INSERT_ERROR"; break;
+				default: break;
+			}
+		}
+		else if ($insUpd == "UPDATE")
+		{
+			$risposta = $this->update_flusso_locale($this->ID, $fields, $values);
+			switch ($risposta)
+			{
+				case true: $risposta = "UPDATE_OK"; break;
+				case false: $risposta = "UPDATE_ERROR"; break;
+				default: break;
+			}
+		}
+		else $risposta = "INSERT_ERROR";
+		return $risposta;
+	}
+	
+	public function insert_flusso_locale($fields_to_insert, $values_to_insert)
+	{
+		$dim1 = count($fields_to_insert);
+		$dim2 = count($values_to_insert);
+		if ($dim1 != $dim2 || $dim1 == 0 || $dim2 == 0) return 0;
+	
+		$clause = "";
+		for ($i = 0; $i < $dim1; $i++)
+		{
+			$clause .= $fields_to_insert[$i];
+			if ($i < $dim1-1) $clause = $clause . ", ";
+		}
+		$query = "INSERT INTO flussi_tabella (" . $clause . ") VALUES (";
+		$clause = "";
+		for ($i = 0; $i < $dim1; $i++)
+		{
+			$clause .= "'" . $values_to_insert[$i] . "'";
+			if ($i < $dim1-1) $clause = $clause . ", ";
+		}
+		$query .= $clause . ")";
+		
+		//if ($_SESSION['CC_User'] != "***+")
+		if (1)
+		{
+			return mysql_query($query);
+		}
+		else
+		{
+			echo "<br>" . $query;
+			return true;
+		}
+	}
+	
+	public function update_flusso_locale($key, $fields_to_update, $values_to_update)
+	{
+		$dim1 = count($fields_to_update);
+		$dim2 = count($values_to_update);
+		
+		if ($dim1 != $dim2 || $dim1 == 0) return FALSE;
+		
+		if ($key == 0 || $key == '0' || $key == NULL) return FALSE;
+	
+		$myOldFlusso = new flussi_tabella($key);
+
+		$clause = "";
+		for ($i = 0; $i < $dim1; $i++)
+		{
+			if ($myOldFlusso->$fields_to_update[$i] != $values_to_update[$i])
+			{
+				$clause .= $fields_to_update[$i] . "='" .$values_to_update[$i]. "' , ";
+			}
+		}
+		//alert ($clause);
+		if ($clause == "") return TRUE;  // non updata nulla, perch� sono tutti uguali
+
+		$clause = substr ($clause, 0, -2);  //  tolgo l'ultimo ", "
+
+		$query = "UPDATE flussi_tabella SET $clause WHERE ID = '" . $key . "'";
+
+		//if ($_SESSION['CC_User'] != "***+")
+		if (1)
+		{
+			if (mysql_query($query) != NULL) return TRUE;
+			else return FALSE;
+		}
+		else
+		{
+			echo "<br>" . $query;
+			return true;
+		}
+	}
+}

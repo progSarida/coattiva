@@ -1,0 +1,157 @@
+Table parametri_annuali
+Field:
+- ID: A.I.
+
+Table utente
+Field:
+- Codice_Fiscale: null
+- Ditta: null
+- Partita_Iva: null
+- Azienda: null
+- Prec_Denom: null
+- Mail: null
+- PEC: null
+- Cognome: null
+- Nome: null
+- Paese_Nascita: null
+- Comune_Nascita: null
+- Provincia_Nascita: null
+
+
+Table storico_residenza
+Field:
+- Frazione: null
+- Esponente: null
+- Dettagli: null
+- Telefono: null
+- Fax: null
+
+
+Table ruolo
+Field:
+- Num_Rate: null
+- Progr_Fornitura: null
+- Tipo_Compenso: null
+
+
+Table tributo
+Field:
+- Titolo_Entrata: null
+- Descrizione_Entrata: null
+- Matricola: null
+- Comune_ID: null
+- Stato_Ingiunzione: add Default value -> null
+- Stato_Stampa: add Default value -> null
+- Pagamenti_Associati: add Default value -> null
+- Scorporo_Tributo: add Default value -> null
+- Scorporo_Interessi: add Default value -> null
+- Scorporo_Spese_Ricerca: add Default value -> null
+- Scorporo_Spese_Notifica: add Default value -> null
+- Scorporo_Eca: add Default value -> null
+- Scorporo_Tributo_Provinciale: add Default value -> null
+- Targa_Sanzione: null
+- Tipo_Sanzione: null
+- Titolo_Sanzione: null
+
+Table pagamento
+Field:
+- ID: A.I.
+- Comune_ID: null
+- Conto_Terzi: null
+- Modalita: null
+- Riferimento_Atto: null
+- Pagante: null
+- Telematico: null
+- Tipo_Pagamento: null
+
+
+Table pignoramento_generale
+Field:
+- ID: A.I.
+
+
+Table notifica_atto
+Field:
+- ID: A.I.
+
+
+Table pignoramento_spese
+Field:
+- ID: A.I.
+
+
+Table 290_n1_n5
+Field:
+- Codice_Sede: null
+- Lettera_Civico_Res: lunghezza valori = 3 (controllare se è giusto in un caso al posto della lettera c'era "int")
+
+
+Table atto
+Field: Comune_ID: add Default value -> null
+
+
+Table pignoramento_generale
+Field:
+- Importo_Dovuto: null
+
+
+Table pignoramento_presso_terzi
+Field:
+- ID: A.I.
+
+
+Table ufficio_giudiziario
+Field:
+- Esponente: null
+- Dettagli: null
+- Telefono: null
+- Fax: null
+- Mail: null
+- Sito: null
+- PEC: null
+- Sezione: null
+- Denominazione: null
+
+
+Table ufficio_comune
+Field:
+- Dettagli: null
+- Telefono: null
+- Mail: null
+- Sito: null
+- PEC: null
+- Modalita_Invio: null
+- Partita_Iva: null
+- Esponente: null
+
+
+Table parametri_generali
+Field:
+- ID: A.I.
+
+
+Table parametri_email
+Field:
+- ID: A.I.
+
+
+Table parametri_pagamento
+Field:
+- ID: A.I.
+
+
+Table parametri_responsabili
+Field:
+- ID: A.I.
+
+
+Table tariffe_coazione
+Field:
+- Data_Inizio: null
+- Deposito_Portata: null
+
+
+Table flows
+Field:
+- PrinterId: null
+- PrintTypeId: add Default value -> null

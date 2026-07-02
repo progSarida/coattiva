@@ -1,0 +1,753 @@
+<script>
+var stringaMODE = "&p=<?php echo $p; ?>&c=<?php echo $c; ?>&a=<?php echo $a; ?>";
+var modifica = 0;
+var blocca_menu = 0;
+var blocca_modifica = 0;
+</script>
+
+<?php include 'gestione_pagine.php';?>
+
+<script>
+	function menuClick (value)
+	{
+		if (modifica==1)
+		{
+			alert('salvare i dati o annullare prima di procedere');
+		}
+		else if(blocca_menu==0)
+		{
+			
+		$elab_atti = "/gitco2/elaborazioni/";
+		$stampa_atti = "/gitco2/stampe/stampa_atto.php?"+stringaMODE;
+		$elenco_atti = "/gitco2/stampe/elenco_atto.php?"+stringaMODE;
+		$stampe = "/gitco2/stampe/";
+		$stampa_pignoramenti = "/gitco2/stampe/stampa_pignoramento.php?"+stringaMODE;
+		$elenco_pignoramenti = "/gitco2/stampe/gestione_elenco_pignoramenti.php?"+stringaMODE;
+		$procedure_controllo = "/gitco2/stampe/procedure_controllo.php?"+stringaMODE;
+		$autorita = "/gitco2/parametri/ufficio_giudiziario.php?"+stringaMODE;
+		$ente_esterno_menu = "/gitco2/parametri/ente_esterno.php?"+stringaMODE;
+		$sede = "/gitco2/parametri/banca.php?"+stringaMODE;
+		$ufficio_comune_link = "/gitco2/parametri/ufficio_comune.php?"+stringaMODE;
+		$filiale = "/gitco2/parametri/filiale.php?"+stringaMODE;
+		
+		switch(value)
+		{
+			case '1':	 menulink = "/gitco2/anagrafe/dati_soggetto.php?"+stringaMODE;								break;
+			case '2':  	 menulink = "/gitco2/anagrafe/annotazioni.php?"+stringaMODE;								break;		
+			case '3':    menulink = "/gitco2/anagrafe/recapito.php?"+stringaMODE;									break;
+			case '4':	 menulink = "/gitco2/anagrafe/domicilio.php?"+stringaMODE;									break;
+			case '5':	 menulink = "/gitco2/anagrafe/dettagli.php?"+stringaMODE;									break;
+			case '6':	 menulink = "/gitco2/anagrafe/cambia_residenza.php?"+stringaMODE;							break;
+
+			case '7':	 menulink = "/gitco2/coattiva/gestione_ruolo.php?"+stringaMODE;								break;
+
+			case '8':	 menulink = "/gitco2/290/preimportazione_290.php?"+stringaMODE;								break;
+			case '79':	 menulink = "/gitco2/290/modelli_290.php?"+stringaMODE;										break;
+
+			case '44':	 menulink = "/gitco2/coattiva/lista_codici_tributo.php?"+stringaMODE;						break;
+			case '51':	 menulink = "/gitco2/coattiva/lista_tariffe.php?"+stringaMODE;								break;
+			case '9':	 menulink = "/gitco2/coattiva/gestione_partita.php?"+stringaMODE;							break;
+			case '10':	 menulink = "/gitco2/coattiva/ingiunzione.php?"+stringaMODE;								break;
+			case '11':	 menulink = "/gitco2/coattiva/pagamento.php?"+stringaMODE;									break;
+			case '12':	 menulink = "/gitco2/coattiva/ricorso.php?"+stringaMODE;									break;
+			case '50':	 menulink = "/gitco2/coattiva/coazione.php?"+stringaMODE;									break;
+
+			case '45':	 menulink = "/gitco2/ispezioni/ricerche_ispezioni.php?"+stringaMODE;						break;
+
+			case '13':	 menulink = "/gitco2/gestione/crea_comune.php?"+stringaMODE;								break;
+			case '14':	 menulink = "/gitco2/gestione/crea_anno.php?"+stringaMODE;									break;
+			case '15':	 menulink = "/gitco2/gestione/elimina_comune.php?"+stringaMODE;								break;
+			case '16':	 menulink = "/gitco2/gestione/elimina_anno.php?"+stringaMODE;								break;
+
+			case '17':	 menulink = "/gitco2/parametri/dati_ente.php?"+stringaMODE;									break;
+			case '18':	 menulink = "/gitco2/parametri/gestore.php?"+stringaMODE;									break;
+			case '30':	 menulink = "/gitco2/parametri/ufficio.php?"+stringaMODE;									break;
+			case '55':	 menulink = "/gitco2/parametri/stemma.php?"+stringaMODE;									break;
+			
+
+			case '35':	 menulink = $autorita + "&tipo_ufficio=tribunale";											break;
+			case '36':	 menulink = $autorita + "&tipo_ufficio=giudice";											break;
+			case '37':	 menulink = $autorita + "&tipo_ufficio=appello";											break;
+			case '38':	 menulink = $autorita + "&tipo_ufficio=comm_trib_prov";										break;
+			case '39':	 menulink = $autorita + "&tipo_ufficio=comm_trib_reg";										break;
+			case '40':	 menulink = $autorita + "&tipo_ufficio=cassazione";											break;
+
+			case '46':	 menulink = $sede + "&tipo_sede=avvocato";													break;
+			case '47':	 menulink = $sede + "&tipo_sede=banca";														break;
+			case '48':	 menulink = $filiale + "&tipo_sede=banca";														break;
+			case '60':	 menulink = $ente_esterno_menu + "&tipo_ente=INPS";											break;
+			case '85':	 menulink = "/gitco2/parametri/tribunale_esterno.php?"+stringaMODE;							break;
+			case '64':	 menulink = $ufficio_comune_link + "&tipo=uff_anagrafico";									break;
+			case '65':	 menulink = $ufficio_comune_link + "&tipo=uff_postale";										break;
+			
+			case '56':	 menulink = "/gitco2/parametri/par_atto.php?"+stringaMODE;									break;
+			case '49':	 menulink = "/gitco2/parametri/par_pignoramento.php?"+stringaMODE;							break;
+			case '89':	 menulink = "/gitco2/parametri/par_ricorso.php?"+stringaMODE;								break;
+			
+			case '19':	 menulink = "/gitco2/parametri/par_responsabili.php?tipo_riscossione=CDS"+stringaMODE;		break;
+			case '20':	 menulink = "/gitco2/parametri/par_annuali.php?tipo_riscossione=CDS"+stringaMODE;			break;
+			case '53':	 menulink = "/gitco2/parametri/par_pagamento.php?tipo_riscossione=CDS"+stringaMODE;			break;
+			case '77':	 menulink = "/gitco2/parametri/par_email.php?tipo_riscossione=CDS"+stringaMODE;				break;
+			case '78':	 menulink = "/gitco2/parametri/par_spedizione.php?tipo_riscossione=CDS"+stringaMODE;		break;
+						
+			case '21':	 menulink = "/gitco2/parametri/stampe/testo_avviso_intimazione.php?"+stringaMODE;			break;
+			case '28':	 menulink = "/gitco2/parametri/stampe/testo_ingiunzione.php?"+stringaMODE;					break;
+			case '43':	 menulink = "/gitco2/parametri/stampe/testo_sollecito_ingiunzione.php?"+stringaMODE;		break;
+			case '31':	 menulink = "/gitco2/parametri/stampe/testo_preavviso_ingiunzione.php?"+stringaMODE;		break;
+			case '54':	 menulink = "/gitco2/parametri/stampe/testo_pignoramento_presso_lavoro.php?"+stringaMODE;	break;
+			case '74':	 menulink = "/gitco2/parametri/stampe/testo_pignoramento_presso_banca.php?"+stringaMODE;	break;
+			case '83':	 menulink = "/gitco2/parametri/stampe/testo_pignoramento_veicolo.php?"+stringaMODE;			break;
+			case '86':	 menulink = "/gitco2/parametri/stampe/testo_preavviso_fermo.php?"+stringaMODE;				break;
+			case '87':	 menulink = "/gitco2/parametri/stampe/testo_fermo_amministrativo.php?"+stringaMODE;			break;
+			
+			case '57':	 menulink = "/gitco2/parametri/stampe/testo_richiesta_rateizzazione.php?"+stringaMODE;		break;
+			case '58':	 menulink = "/gitco2/parametri/stampe/testo_esito_rateizzazione.php?"+stringaMODE;			break;
+			case '61':	 menulink = "/gitco2/parametri/stampe/testo_richiesta_matricole.php?"+stringaMODE;			break;
+			case '66':	 menulink = "/gitco2/parametri/stampe/testo_richiesta_indirizzo.php?"+stringaMODE;			break;
+			case '67':	 menulink = "/gitco2/parametri/stampe/testo_richiesta_decesso.php?"+stringaMODE;			break;
+			case '68':	 menulink = "/gitco2/parametri/stampe/testo_richiesta_duplicato_AR.php?"+stringaMODE;		break;
+			
+			case '52':	 menulink = "/gitco2/parametri/lista_tariffe_generali.php?"+stringaMODE;					break;
+			
+			case '22':	 menulink = $elab_atti + "elabora_atto.php?tipo_atto=Ingiunzione"+stringaMODE;				break;
+			case '32':	 menulink = $elab_atti + "elabora_atto.php?tipo_atto=sollecito"+stringaMODE;				break;
+			case '23':	 menulink = $elab_atti + "elabora_atto.php?tipo_atto=avv_intimazione"+stringaMODE;			break;
+			case '62':	 menulink = "/gitco2/coattiva/importazione_notifiche.php?provenienza=COATTIVA"+stringaMODE;		break;
+			case '63':	 menulink = "/gitco2/targheestere/elaborazioni/travaso_flussi_su_gitco.php?provenienza=COATTIVA"+stringaMODE;		break;
+			case '73':	 menulink = "/gitco2/targheestere/elaborazioni/travaso_pagamenti_su_gitco.php?provenienza=COATTIVA"+stringaMODE;		break;
+			case '81':	 menulink = $elab_atti + "utente_visura.php?"+stringaMODE;									break;
+			
+			case '70':	 menulink = "/gitco2/coattiva/importazione_pagamenti.php?provenienza=COATTIVA"+stringaMODE;		break;
+			case '71':	 menulink = "/gitco2/coattiva/pagamento_da_bonificare.php?provenienza=COATTIVA&telematico=NO"+stringaMODE;		break;
+			case '72':	 menulink = "/gitco2/coattiva/pagamento_da_bonificare.php?provenienza=COATTIVA&telematico=SI"+stringaMODE;		break;
+					
+
+			case '34':	 menulink = $stampa_atti + "&tipo_atto=preavviso_ing";										break;
+			case '24':	 menulink = $stampa_atti + "&tipo_atto=Ingiunzione";										break;
+			case '42':	 menulink = $stampa_atti + "&tipo_atto=sollecito";											break;
+			case '25':	 menulink = $stampa_atti + "&tipo_atto=avv_intimazione";									break;
+			
+			case '33':	 menulink = $elenco_atti + "&tipo_atto=preavviso_ing";										break;
+			case '26':	 menulink = $elenco_atti + "&tipo_atto=Ingiunzione";										break;
+			case '41':	 menulink = $elenco_atti + "&tipo_atto=sollecito";											break;
+			case '27':	 menulink = $elenco_atti + "&tipo_atto=avv_intimazione";									break;
+
+			case '88':	 menulink = $stampe+"gestione_elenco_posizioni.php?"+stringaMODE;									break;
+			
+			case '82':	 menulink = $elenco_pignoramenti;															break;
+			case '75':	 menulink = $stampa_pignoramenti + "&tipo_pignoramento=lavoro";								break;
+			case '76':	 menulink = $stampa_pignoramenti + "&tipo_pignoramento=banca";								break;
+			case '84':	 menulink = $stampa_pignoramenti + "&tipo_pignoramento=veicolo";							break;
+			
+			case '59':	 menulink = "/gitco2/stampe/gestione_richiesta_inps.php?"+stringaMODE;						break;
+			case '69':	 menulink = "/gitco2/stampe/richiesta_validazione_notifica.php?"+stringaMODE;				break;
+			case '80':	 menulink = "/gitco2/stampe/pagina_stampa_pagamenti.php?tipo=ELENCO"+stringaMODE;			break;
+			
+
+			case '29':	 menulink = "/gitco2/menu/scelta_CC_e_anno.php?"+stringaMODE;								break;
+
+			default:	 alert ("Errore nella scelta del menu");													break;
+		}
+		
+		top.location.href = menulink;
+		
+		}
+	
+	}
+
+</script>
+<script>
+	var fn = function (e)
+	{
+		if (!e)
+		{
+	    	e = window.event;
+		}
+
+	    var keycode = e.keyCode;
+	    if (e.which)
+	        keycode = e.which;
+
+	 	//var src = e.srcElement;
+	  	//if (e.target)
+	       	//src = e.target;
+
+	     	
+	//CONSULTA F2
+	   	    if (113 == keycode)
+		    {
+		        // Firefox and other non IE browsers
+		        if (e.preventDefault)
+		        {
+		            e.preventDefault();
+		            e.stopPropagation();
+		        }
+		        // Internet Explorer
+		        else if (e.keyCode)
+		        {
+		            e.keyCode = 0;
+		            e.returnValue = false;
+		            e.cancelBubble = true;
+		        }		
+
+				cambia_F2();
+
+		        return false;
+		    }
+	//SALVA F3
+	   	    else if (114 == keycode)
+	   	    {
+	   	        // Firefox and other non IE browsers
+	   	        if (e.preventDefault)
+	   	        {
+	   	            e.preventDefault();
+	   	            e.stopPropagation();
+	   	        }
+	   	        // Internet Explorer
+	   	        else if (e.keyCode)
+	   	        {
+	   	            e.keyCode = 0;
+	   	            e.returnValue = false;
+	   	            e.cancelBubble = true;
+	   	        }		
+
+				salva_form();
+	         	
+	   	        return false;
+	   	    }
+	//ELIMINA F4
+	   	    else if (115 == keycode)
+		    {
+		        // Firefox and other non IE browsers
+		        if (e.preventDefault)
+		        {
+		            e.preventDefault();
+		            e.stopPropagation();
+		        }
+		        // Internet Explorer
+		        else if (e.keyCode)
+		        {
+		            e.keyCode = 0;
+		            e.returnValue = false;
+		            e.cancelBubble = true;
+		        }		
+
+				cancella_form();
+				
+		        return false;
+		    }
+	//ANNULLA F5
+	   	    else if (116 == keycode)
+		    {
+		        // Firefox and other non IE browsers
+		        if (e.preventDefault)
+		        {
+		            e.preventDefault();
+		            e.stopPropagation();
+		        }
+		        // Internet Explorer
+		        else if (e.keyCode)
+		        {
+		            e.keyCode = 0;
+		            e.returnValue = false;
+		            e.cancelBubble = true;
+		        }		
+
+		        annulla();
+		        	
+		        return false;
+		    }
+	//MODIFICA F6
+	   	    else if (117 == keycode)
+		    {
+		        // Firefox and other non IE browsers
+		        if (e.preventDefault)
+		        {
+		            e.preventDefault();
+		            e.stopPropagation();
+		        }
+		        // Internet Explorer
+		        else if (e.keyCode)
+		        {
+		            e.keyCode = 0;
+		            e.returnValue = false;
+		            e.cancelBubble = true;
+		        }		
+
+				nuovo_F6();
+		        
+		        return false;
+		    }
+	//RECORD PRECEDENTE F7
+			else if (118 == keycode)
+	   	    {
+	   	        // Firefox and other non IE browsers
+	   	        if (e.preventDefault)
+	   	        {
+	   	            e.preventDefault();
+	   	            e.stopPropagation();
+	   	        }
+	   	        // Internet Explorer
+	   	        else if (e.keyCode)
+	   	        {
+	   	            e.keyCode = 0;
+	   	            e.returnValue = false;
+	   	            e.cancelBubble = true;
+	   	        }		
+
+	   	     	cambia_pag('prev');
+   	        	
+	   	        return false;
+	   	    }
+	//RECORD SUCCESSIVO F8
+			else if (119 == keycode)
+	   	    {
+	   	        // Firefox and other non IE browsers
+	   	        if (e.preventDefault)
+	   	        {
+	   	            e.preventDefault();
+	   	            e.stopPropagation();
+	   	        }
+	   	        // Internet Explorer
+	   	        else if (e.keyCode)
+	   	        {
+	   	            e.keyCode = 0;
+	   	            e.returnValue = false;
+	   	            e.cancelBubble = true;
+	   	        }		
+
+	   	     	cambia_pag('suc');
+	   	     	
+	   	        return false;
+	   	    }
+	//RICERCA F9
+			else if (120 == keycode)
+	   	    {
+	   	        // Firefox and other non IE browsers
+	   	        if (e.preventDefault)
+	   	        {
+	   	            e.preventDefault();
+	   	            e.stopPropagation();
+	   	        }
+	   	        // Internet Explorer
+	   	        else if (e.keyCode)
+	   	        {
+	   	            e.keyCode = 0;
+	   	            e.returnValue = false;
+	   	            e.cancelBubble = true;
+	   	        }	
+
+	   	        ricerca_F9();
+
+	   	     	return false;
+
+	   	    }
+
+	//STAMPA F10
+			else if (121 == keycode)
+	   	    {
+	   	        // Firefox and other non IE browsers
+	   	        if (e.preventDefault)
+	   	        {
+	   	            e.preventDefault();
+	   	            e.stopPropagation();
+	   	        }
+	   	        // Internet Explorer
+	   	        else if (e.keyCode)
+	   	        {
+	   	            e.keyCode = 0;
+	   	            e.returnValue = false;
+	   	            e.cancelBubble = true;
+	   	        }	
+
+	   	        stampa_F10();
+
+	   	     	return false;	
+
+	   	    }
+	   	    
+	//HELP F11
+			else if (122 == keycode)
+	   	    {
+	   	        // Firefox and other non IE browsers
+	   	        if (e.preventDefault)
+	   	        {
+	   	            e.preventDefault();
+	   	            e.stopPropagation();
+	   	        }
+	   	        // Internet Explorer
+	   	        else if (e.keyCode)
+	   	        {
+	   	            e.keyCode = 0;
+	   	            e.returnValue = false;
+	   	            e.cancelBubble = true;
+	   	        }		
+
+	   	        if(blocca_menu==0)
+	   	     		window.open('/gitco2/help/intestazione.html','help','width=650,height=400,top=70,left=70,scrollbars=yes, menubar=yes');
+	   	     	
+	   	        return false;
+	   	    }
+	//HOME F12
+			else if (123 == keycode)
+	   	    {
+	   	        // Firefox and other non IE browsers
+	   	        if (e.preventDefault)
+	   	        {
+	   	            e.preventDefault();
+	   	            e.stopPropagation();
+	   	        }
+	   	        // Internet Explorer
+	   	        else if (e.keyCode)
+	   	        {
+	   	            e.keyCode = 0;
+	   	            e.returnValue = false;
+	   	            e.cancelBubble = true;
+	   	        }		
+
+	   	     	if(blocca_menu==0)
+	   	     		link('menu');
+	   	     	
+	   	        return false;
+	   	    }
+	//PAGINA GIU PagDown
+			else if (34 == keycode)
+	   	    {
+	   	        // Firefox and other non IE browsers
+	   	        if (e.preventDefault)
+	   	        {
+	   	            e.preventDefault();
+	   	            e.stopPropagation();
+	   	        }
+	   	        // Internet Explorer
+	   	        else if (e.keyCode)
+	   	        {
+	   	            e.keyCode = 0;
+	   	            e.returnValue = false;
+	   	            e.cancelBubble = true;
+	   	        }		
+
+	   	     	pag_prec();
+	   	        	
+	   	        return false;
+	   	    }
+	//PAGINA SU PagUp
+			else if (33 == keycode)
+	   	    {
+	   	        // Firefox and other non IE browsers
+	   	        if (e.preventDefault)
+	   	        {
+	   	            e.preventDefault();
+	   	            e.stopPropagation();
+	   	        }
+	   	        // Internet Explorer
+	   	        else if (e.keyCode)
+	   	        {
+	   	            e.keyCode = 0;
+	   	            e.returnValue = false;
+	   	            e.cancelBubble = true;
+	   	        }		
+
+	   	     	pag_suc();
+	   	     	
+	   	        return false;
+	   	    }
+	//ENTER
+			else if (13 == keycode)
+	   	    {
+
+	   	     	
+	   	        return true;
+	   	    }
+	 
+	};
+
+	document.onkeydown = fn;
+
+</script>
+<script>	
+	
+//NUOVO UTENTE E RITORNO AL MENU
+function link(value)
+{
+
+	switch(value)
+	{
+		case "menu":
+
+			stringa = "/gitco2/menu/home.php?c=<?php echo $c; ?>&a=<?php echo $a; ?>";
+							
+		break;
+				
+	}
+
+	if(modifica==0)
+		top.location.href = stringa;
+	else
+		alert("salvare i dati o annullare prima di procedere");
+}
+
+function submit_buttons (value)
+{
+	var ritorno = null;
+
+		switch(value)
+		{
+			case "Insert": 	
+				ritorno = confirm("Si stanno inserendo nuovi dati nel database.\n\nConfermare l'operazione?");
+				$('#invia_submit').val('Insert');
+
+				break;
+			case "Delete":  
+				ritorno = confirm("Si stanno eliminando i dati dal database relativi all'utente corrente.\nLa versione precedente dei dati non sar\xE0 in alcun modo ripristinabile in futuro. \n\nConfermare l'operazione?");	
+				$('#invia_submit').val('Delete');
+
+				break;
+			case "Update": 	
+				ritorno = confirm("Si stanno modificando i dati del database relativi all'utente corrente.\nLa versione precedente dei dati non sar\xE0 in alcun modo ripristinabile in futuro. \n\nConfermare l'operazione?");
+				$('#invia_submit').val('Update');
+
+				break;
+
+			case "Salva": 	
+				ritorno = confirm("Si stanno inserendo nuovi dati nel database.\n\nConfermare l'operazione?");
+				$('#invia_submit').val('Salva');
+
+				break;
+
+			case "Elabora": 	
+				ritorno = confirm("Si stanno elaborando nuovi dati per l'inserimento nel database.\n\nConfermare l'operazione?");
+				$('#invia_submit').val('Elabora');
+
+				break;
+			}
+		
+		if(value=="Delete")
+		{
+			if(ritorno)
+			{
+				ritorno2 = confirm("Sei sicuro di voler eliminare i dati?");
+				if(ritorno2)
+					{return true;}
+				else
+					{return false;}
+			}
+			else
+			{return false;}
+		}
+		else
+		{	
+			if(ritorno)
+				{return	true;}
+			else
+				{return	false;}
+		}
+	
+}
+</script>
+
+<script>
+
+function focusCampo()
+{
+	$("#id_cerca").focus();
+}
+
+function focusIndex()
+{
+	$('[tabindex=1]').focus();
+}
+
+</script>
+
+<div class="mainmenu width100">
+<ul class="text_left">
+	<li class="li_hc"><a href="#" target="_self" >Gestione Ente</a><ul class="ul_ch">
+			<li class="li_nc"><a onclick="menuClick('29');" href="#" >Selezione Ente/Anno</a></li>
+         	<li class="li_nc"><a onclick="menuClick('13');" href="#" >Creazione ente</a></li>
+        	<li class="li_nc"><a onclick="menuClick('14');" href="#" >Creazione anno</a></li>
+         	<li class="li_nc"><a onclick="menuClick('15');" href="#" >Cancellazione ente</a></li>
+         	<li class="li_nc"><a onclick="menuClick('16');" href="#" >Cancellazione anno</a></li>
+    </ul></li>
+	<li class="li_hc"><a href="#" target="_self" >Anagrafe</a><ul class="ul_ch">
+         <li class="li_nc"><a onclick="menuClick('1');" href="#" >Dati Soggetto</a></li>
+         <li class="li_nc"><a onclick="menuClick('2');" href="#" >Annotazioni</a></li>
+         <li class="li_nc"><a onclick="menuClick('3');" href="#" >Recapito</a></li>
+         <li class="li_nc"><a onclick="menuClick('4');" href="#" >Domicilio</a></li>
+         <li class="li_nc"><a onclick="menuClick('5');" href="#" >Dettagli</a></li>
+         <li class="li_nc"><a onclick="menuClick('6');" href="#" >Cambia Residenza e Storico</a></li>
+    </ul></li>
+    <li class="li_hc"><a href="#" target="_self" >Ruolo</a><ul class="ul_ch">
+         <li><a href="#" onclick="menuClick('7');" >Gestione partite</a><ul class="ul_ch">
+         	<li><a href="#" onclick="menuClick('9');" >Iter ingiuntivo</a><ul class="ul_ch">
+	         	<li class="li_nc"><a onclick="menuClick('9');" href="#"  >Codice Tributo</a></li>
+	         	<li class="li_nc"><a onclick="menuClick('10');" href="#" >Ingiunzione</a></li>
+	         	<li class="li_nc"><a onclick="menuClick('11');" href="#" >Pagamenti</a></li>
+	         	<li class="li_nc"><a onclick="menuClick('12');" href="#" >Ricorsi</a></li>
+	        </ul></li>
+	        <li><a href="#" onclick="menuClick('50');" >Iter coattivo</a><ul class="ul_ch">
+	           	<li class="li_nc"><a onclick="menuClick('50');" href="#" >Pignoramento</a></li>
+	        </ul></li>
+    	 </ul></li>
+    	 <li class="li_nc"><a onclick="menuClick('45');" href="#" >Ispezioni</a></li>
+    	 <li class="li_nc"><a onclick="menuClick('44');" href="#" >Lista Codici Tributo</a></li>
+    	 <li class="li_nc"><a onclick="menuClick('51');" href="#" >Lista Tariffe Coazione</a></li>
+         <li class="li_nc"><a onclick="menuClick('8');" href="#" >Importazione 290</a></li>
+         <li class="li_nc"><a onclick="menuClick('79');" href="#" >Modelli 290</a></li>      
+    </ul></li>
+    <li class="li_hc"><a href="#" target="_self" >Elaborazioni</a><ul class="ul_ch">
+    	<li><a href="#" target="_self" >Atti</a><ul class="ul_ch">
+    		<li class="li_nc"><a onclick="menuClick('22');" href="#" >Ingiunzione</a></li>
+    		<li class="li_nc"><a onclick="menuClick('32');" href="#" >Sollecito di pagamento</a></li>
+        	<li class="li_nc"><a onclick="menuClick('23');" href="#" >Avviso di intimazione</a></li>
+        </ul></li>
+        <li><a href="#" target="_self" >Importazioni</a><ul class="ul_ch">
+        	<li class="li_nc"><a onclick="menuClick('62');" href="#" >Importazione Notifiche</a></li>
+        	<li class="li_nc"><a onclick="" href="#" >Passaggio Verso Gitco2</a>
+				<ul class="ul_ch">
+    				<li class="li_nc"><a onclick="menuClick('63');" href="#" >Flussi</a></li>
+    				<li class="li_nc"><a onclick="menuClick('73');" href="#" >Pagamenti</a></li>
+    			</ul>
+			</li>
+			<li class="li_nc"><a onclick="menuClick('70');" href="#" >Importazioni Pagamenti</a></li>
+		</ul></li>
+		<li><a href="#" target="_self" >Bonifiche</a><ul class="ul_ch">
+			<li class="li_nc"><a onclick="" href="#" >Bonifiche Pagamenti</a>
+				<ul class="ul_ch">
+    				<li class="li_nc"><a onclick="menuClick('71');" href="#" >Non Telematici</a></li>
+    				<li class="li_nc"><a onclick="menuClick('72');" href="#" >Telematici</a></li>
+    			</ul>
+			</li>
+		</ul></li>
+		<li class="li_nc"><a onclick="menuClick('81');" href="#" >Visura</a></li>
+    </ul></li>
+    
+    <li class="li_hc"><a href="#" target="_self" >Stampe</a><ul class="ul_ch">
+   		<li class="li_nc"><a target="_self" href="#" >Posizioni</a>
+   			<ul class="ul_ch">
+    			<li class="li_nc"><a onclick="menuClick('88');" href="#" >Elenco</a></li>
+    		</ul>
+		</li>
+		<li><a href="#" target="_self" >Atti</a><ul class="ul_ch">
+		    <li class="li_nc"><a target="_self" href="#" >Preavviso Ingiunzione</a>
+		    	<ul class="ul_ch">
+		        	<li class="li_nc"><a onclick="menuClick('33');" href="#" >Elenco</a></li>
+		        	<li class="li_nc"><a onclick="menuClick('34');" href="#" >Stampa</a></li>
+		        </ul>
+		    </li>
+		    <li class="li_nc"><a target="_self" href="#" >Ingiunzione</a>
+		    	<ul class="ul_ch">
+		    		<li class="li_nc"><a onclick="menuClick('26');" href="#" >Elenco</a></li>
+		    		<li class="li_nc"><a onclick="menuClick('24');" href="#" >Stampa</a></li>
+		    	</ul>
+		    </li>
+		    <li class="li_nc"><a target="_self" href="#" >Sollecito di pagamento</a>
+		    	<ul class="ul_ch">
+		    		<li class="li_nc"><a onclick="menuClick('41');" href="#" >Elenco</a></li>
+		    		<li class="li_nc"><a onclick="menuClick('42');" href="#" >Stampa</a></li>
+		    	</ul>
+		    </li>
+		    <li class="li_nc"><a target="_self" href="#" >Avviso di intimazione</a>
+		    	<ul class="ul_ch">
+		    		<li class="li_nc"><a onclick="menuClick('27');" href="#" >Elenco</a></li>
+		    		<li class="li_nc"><a onclick="menuClick('25');" href="#" >Stampa</a></li>
+		    	</ul>
+		    </li>
+		</ul></li>
+		<li><a href="#" target="_self" >Pignoramenti</a><ul class="ul_ch">
+			<li class="li_nc"><a target="_self" href="#" onclick="menuClick('82');">Elenco</a></li>
+		    <li class="li_nc"><a target="_self" href="#" >Presso datore di lavoro</a>
+		    	<ul class="ul_ch">
+		        	<li class="li_nc"><a onclick="menuClick('75');" href="#" >Stampa</a></li>
+		        </ul>
+		    </li>
+		    <li class="li_nc"><a target="_self" href="#" >Presso banca</a>
+		    	<ul class="ul_ch">
+		    		<li class="li_nc"><a onclick="menuClick('76');" href="#" >Stampa</a></li>
+		    	</ul>
+		    </li>
+		    <li class="li_nc"><a target="_self" href="#" >Beni mobili registrati</a>
+		    	<ul class="ul_ch">
+		        	<li class="li_nc"><a onclick="menuClick('84');" href="#" >Stampa</a></li>
+		        </ul>
+		    </li>
+		</ul></li>
+		<li><a href="#" target="_self" >Altri documenti</a><ul class="ul_ch"> 
+			<li class="li_nc"><a onclick="menuClick('59');" href="#" >Richiesta Codici INPS</a></li>
+			<li class="li_nc"><a onclick="menuClick('69');" href="#" >Richieste validazione notifica</a></li>
+		</ul></li>
+		    <li class="li_nc"><a target="_self" href="#" >Pagamenti</a>
+		    	<ul class="ul_ch">
+		    		<li class="li_nc"><a onclick="menuClick('80');" href="#" >Elenco</a></li>
+		    	</ul>
+		    </li>
+	</ul></li>
+    
+    <li class="li_hc"><a href="#" target="_self" >Testi</a><ul class="ul_ch">
+     	<li><a href="#" target="_self" >Atti</a><ul class="ul_ch">
+         	<li class="li_nc"><a onclick="menuClick('31');" href="#" >Preavviso Ingiunzione</a></li>
+         	<li class="li_nc"><a onclick="menuClick('28');" href="#" >Ingiunzione</a></li>
+         	<li class="li_nc"><a onclick="menuClick('43');" href="#" >Sollecito di pagamento</a></li>
+         	<li class="li_nc"><a onclick="menuClick('21');" href="#" >Avviso di intimazione</a></li>
+         </ul></li>
+         <li><a href="#" target="_self" >Pignoramenti</a><ul class="ul_ch">
+         	<li class="li_nc"><a onclick="menuClick('54');" href="#" >Presso datore di lavoro</a></li>
+         	<li class="li_nc"><a onclick="menuClick('74');" href="#" >Presso banca</a></li>
+         	<li class="li_nc"><a onclick="menuClick('83');" href="#" >Beni mobili registrati</a></li>
+         	<li class="li_nc"><a onclick="menuClick('86');" href="#" >Preavviso fermo amministrativo</a></li>
+         	<li class="li_nc"><a onclick="menuClick('87');" href="#" >Fermo amministrativo</a></li>
+         </ul></li>
+         <li><a href="#" target="_self" >Altri documenti</a><ul class="ul_ch">
+         	<li class="li_nc"><a onclick="menuClick('57');" href="#" >Richiesta rateizzazione</a></li>
+         	<li class="li_nc"><a onclick="menuClick('58');" href="#" >Esito rateizzazione</a></li>
+         	<li class="li_nc"><a onclick="menuClick('61');" href="#" >Richiesta matricole</a></li>
+         	<li class="li_nc"><a onclick="menuClick('66');" href="#" >Richiesta indirizzo</a></li>
+         	<li class="li_nc"><a onclick="menuClick('67');" href="#" >Richiesta certificato di decesso</a></li>
+         	<li class="li_nc"><a onclick="menuClick('68');" href="#" >Richiesta duplicato AR</a></li>
+         </ul></li>
+    </ul></li>         
+    <li class="li_hc"><a href="#" target="_self" >Parametri</a><ul class="ul_ch">
+      	 <li><a href="#" target="_self" >Comune</a><ul class="ul_ch">
+	    	 <li class="li_nc"><a onclick="menuClick('55');" href="#" >Stemma</a></li>
+	         <li class="li_nc"><a onclick="menuClick('17');" href="#" >Dati Ente</a></li>
+	         <li class="li_nc"><a onclick="menuClick('18');" href="#" >Gestore</a></li>
+	         <li class="li_nc"><a onclick="menuClick('30');" href="#" >Ufficio</a></li>
+	     </ul></li>
+         <li><a href="#" target="_self" >Autorita'</a><ul class="ul_ch">
+         	<li class="li_nc"><a onclick="menuClick('35');" href="#" >Tribunale</a></li>
+         	<li class="li_nc"><a onclick="menuClick('36');" href="#" >Giudice di Pace</a></li>
+         	<li class="li_nc"><a onclick="menuClick('37');" href="#" >Corte d'appello</a></li>
+         	<li class="li_nc"><a onclick="menuClick('38');" href="#" >Commissione tributaria provinciale</a></li>
+         	<li class="li_nc"><a onclick="menuClick('39');" href="#" >Commissione tributaria regionale</a></li>
+         	<li class="li_nc"><a onclick="menuClick('40');" href="#" >Corte di cassazione</a></li>
+    	 </ul></li>
+    	  <li><a href="#" target="_self" >Enti</a><ul class="ul_ch">
+    	    <li class="li_nc"><a onclick="menuClick('46');" href="#" >Avvocati</a></li>
+    	    <li class="li_nc"><a onclick="menuClick('47');" href="#" >Sedi banche</a></li>
+			<li class="li_nc"><a onclick="menuClick('48');" href="#" >Filiali banche</a></li>
+
+         	<li class="li_nc"><a onclick="menuClick('60');" href="#" >INPS</a></li>
+         	<li class="li_nc"><a onclick="menuClick('85');" href="#" >Tribunali / Ist. vendite giudiziarie</a></li>
+         	<li class="li_nc"><a onclick="menuClick('64');" href="#" >Uffici anagrafici</a></li>
+         	<li class="li_nc"><a onclick="menuClick('65');" href="#" >Uffici postali</a></li>
+    	 </ul></li>
+    	 <li><a href="#" target="_self" >Generali</a><ul class="ul_ch">
+    		<li><a onclick="menuClick('56');" href="#" >Atti</a></li>
+    		<li><a onclick="menuClick('49');" href="#" >Pignoramenti</a></li>
+    		<li><a onclick="menuClick('89');" href="#" >Ricorsi</a></li>
+    	 </ul></li>
+         <li><a href="#" target="_self" >Codice della strada</a><ul class="ul_ch">
+	         <li class="li_nc"><a onclick="menuClick('20');" href="#" >Parametri annuali</a></li>
+	         <li class="li_nc"><a onclick="menuClick('77');" href="#" >Parametri email</a></li>
+	         <li class="li_nc"><a onclick="menuClick('53');" href="#" >Parametri pagamento</a></li>
+	         <li class="li_nc"><a onclick="menuClick('19');" href="#" >Parametri responsabili</a></li>
+	         <li class="li_nc"><a onclick="menuClick('78');" href="#" >Parametri spedizione</a></li>      
+	     </ul></li>       	
+    	 <li><a href="#" target="_self" >Tariffe</a><ul class="ul_ch">
+    		<li class="li_nc"><a onclick="menuClick('52');" href="#" >Pignoramento</a></li>
+    	 </ul></li>
+    	 
+    </ul></li>
+    
+</ul>
+</div>
