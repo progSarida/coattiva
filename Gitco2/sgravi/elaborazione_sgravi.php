@@ -92,8 +92,10 @@ $blocca_elaborazione = ($ultimo_anno_elaborato === null && $primo_anno_suggerito
 // Stop coattiva: annata che il form sta per elaborare (da sequenzialita', non da data-2)
 // e stato dello stop. Riusati da UI e processing nella stessa request.
 $anno_target = ($ultimo_anno_elaborato !== null) ? $prossimo_anno_elaborabile : $primo_anno_suggerito;
-$stop_coattiva_attivo   = (DATA_STOP_COATTIVA !== null && $anno_target !== null && $anno_target >= 2022 && $anno_target <= 2023);
-$stop_coattiva_bloccato = (DATA_STOP_COATTIVA !== null && $anno_target !== null && $anno_target >= 2024);
+// $stop_coattiva_attivo   = (DATA_STOP_COATTIVA !== null && $anno_target !== null && $anno_target >= 2022 && $anno_target <= 2023);
+$stop_coattiva_attivo   = (DATA_STOP_COATTIVA !== null && $anno_target !== null && $anno_target >= 2022);
+// $stop_coattiva_bloccato = (DATA_STOP_COATTIVA !== null && $anno_target !== null && $anno_target >= 2024);
+$stop_coattiva_bloccato = (DATA_STOP_COATTIVA == null && $anno_target !== null && $anno_target >= 2024);
 
 if ($cls_help->getVar("data_elab") != NULL) {
     // L'utente ha gia' valorizzato data_elab (anche via POST): vince quello.
@@ -438,7 +440,8 @@ if ($showPrintRaw === null) {
     // Stop coattiva: messaggio aggiuntivo (annate 2022/2023) o blocco (>= 2024).
     if ($stop_coattiva_attivo) {
         $banner_extra .= '<br><b style="color:#4F6FBF;">&#9888; Data limite coattiva attiva: '
-            . DATA_STOP_COATTIVA . ' &mdash; Informativa Cessione attivata automaticamente per le annualita\' 2022 e 2023.</b>';
+            // . DATA_STOP_COATTIVA . ' &mdash; Informativa Cessione attivata automaticamente per le annualita\' 2022 e 2023.</b>';
+            . DATA_STOP_COATTIVA . ' &mdash; Informativa Cessione attivata automaticamente per le annualita\' successive al 2022.</b>';
     } elseif ($stop_coattiva_bloccato) {
         $banner_bg     = '#FBE9E7';
         $banner_border = '#C62828';
@@ -655,10 +658,12 @@ if ($cls_help->getVar('iniziaSgravio') == "si") {
     $dataFornitura = new cls_DateTime($elaboration_date->GetDateDB(), "DB", false);
     $dataFornitura->AddYear("-2");
     $annoFornitura = $dataFornitura->getYear();
+    $annoFornitura = $cls_help->getVar("anno_elab");
 
     // === STOP COATTIVA: override annata/as-of (vedi costante DATA_STOP_COATTIVA) ===
     // Deve stare PRIMA di $data_fornitura_max e del pre-check sequenzialita'.
-    if (DATA_STOP_COATTIVA !== null && $anno_target !== null) {
+    // if (DATA_STOP_COATTIVA !== null && $anno_target !== null) {
+    if (DATA_STOP_COATTIVA == null && $anno_target !== null) {
         if ($anno_target >= 2024) {
             $m = "Annualita' " . $anno_target . " non elaborabile: la riscossione coattiva e' sospesa "
                . "dal 2024 (limite ultimo " . DATA_STOP_COATTIVA . ").";
@@ -987,7 +992,8 @@ if ($cls_help->getVar('iniziaSgravio') == "si") {
     if ($printType == "temp")
         $pdf->temporaryPrinting();
 
-    $dataExcel[] = array("<b>Partita ID</b>", "<b>Data Fornitura</b>", "<b>Obbligato</b>", "<b>Info</b>", "<b>Codice Tributo</b>", "<b>Totale Preso in carico</b>",  "<b>Totale dovuto</b>", "<b>Pagamento</b>", "<b>Totale residuo</b>", "<b>Tipo / Info</b>", "<b>Motivazione</b>");
+    // $dataExcel[] = array("<b>Partita ID</b>", "<b>Data Fornitura</b>", "<b>Obbligato</b>", "<b>Info</b>", "<b>Codice Tributo</b>", "<b>Totale Preso in carico</b>",  "<b>Totale dovuto</b>", "<b>Pagamento</b>", "<b>Totale residuo</b>", "<b>Tipo / Info</b>", "<b>Motivazione</b>");
+    $dataExcel[] = array("<b>Partita ID</b>", "<b>Data Fornitura</b>", "<b>Obbligato</b>", "<b>Info</b>", "<b>Codice Tributo</b>", "<b>Totale Preso in carico</b>", "<b>Totale dovuto</b>", "<b>Pagamento</b>", "<b>Totale residuo</b>", "<b>Tipo / Info</b>", "<b>Ingiunzione</b>", "<b>Cautelare - Coazione</b>");
 
     // Mappa indice riga $dataExcel -> Partita_ID, per popolare la colonna
     // Motivazione (concatenazione di sgravi_documenti.Text) dopo il loop (solo def):
@@ -999,8 +1005,15 @@ if ($cls_help->getVar('iniziaSgravio') == "si") {
     // la colonna Motivazione al volo (BuildMotivationText con flagSave=false).
     $dtMap = array();
     if ($printType == "temp") {
-        $rs_dt = $cls_db->getResults($cls_db->ExecuteQuery("SELECT Id, Description FROM document_type"));
-        foreach ($rs_dt as $r_dt) $dtMap[(int)$r_dt['Id']] = $r_dt['Description'];
+        // $rs_dt = $cls_db->getResults($cls_db->ExecuteQuery("SELECT Id, Description FROM document_type"));
+        $rs_dt = $cls_db->getResults($cls_db->ExecuteQuery("SELECT Id, TableTypeId, Description FROM document_type"));
+        // foreach ($rs_dt as $r_dt) $dtMap[(int)$r_dt['Id']] = $r_dt['Description'];
+        foreach ($rs_dt as $r_dt) { 
+            $dtMap[(int)$r_dt['Id']]['TableTypeId'] = $r_dt['TableTypeId']; 
+            $dtMap[(int)$r_dt['Id']]['Description'] = $r_dt['Description'];
+        }
+        $dtMap[0]['TableTypeId'] = 1; 
+        $dtMap[0]['Description'] = 'Riscossione';
     }
 
     $totale_per_pagina_presa_in_carico = 0;
@@ -1136,11 +1149,19 @@ if ($cls_help->getVar('iniziaSgravio') == "si") {
                 $btTmp->SetPigno($pignoT);
                 $btTmp->SetAtto($attiT);
                 $parts = array();
+                $parts2 = array();
                 foreach ($btTmp->GetMotivazioniArray() as $m) {
-                    $desc = isset($dtMap[(int)$m['DocumentTypeId']]) ? $dtMap[(int)$m['DocumentTypeId']] : '(tipo sconosciuto)';
-                    $parts[] = $desc . ': ' . $m['Text'];
+                    // $desc = isset($dtMap[(int)$m['DocumentTypeId']]) ? $dtMap[(int)$m['DocumentTypeId']] : '(tipo sconosciuto)';
+                    $text = (int) $annoFornitura > 2021 ? 'Cessione ramo d\'azienda' : $m['Text'];
+                    $desc = isset($dtMap[(int)$m['DocumentTypeId']]) ? $dtMap[(int)$m['DocumentTypeId']]['Description'] : '(tipo sconosciuto)';
+                    if($dtMap[(int)$m['DocumentTypeId']]['TableTypeId'] != 2)
+                        // $parts[] = $desc . ': ' . $m['Text'];
+                        $parts[] = $desc . ': ' . $text;
+                    else if($dtMap[(int)$m['DocumentTypeId']]['TableTypeId'] != 1)
+                        $parts2[] = $desc . ': ' . $text;
                 }
                 $dataExcel[count($dataExcel) - 1][10] = implode(' | ', $parts);
+                $dataExcel[count($dataExcel) - 1][11] = implode(' | ', $parts2);
             }
         }
 
@@ -1340,21 +1361,58 @@ if ($cls_help->getVar('iniziaSgravio') == "si") {
     // JOIN su sgravio.ID = sgravi_documenti.Sgravio_ID (path piu' diretto via PK).
     if ($printType == "def" && !empty($indici_motivazioni)) {
         $partita_ids_csv = implode(',', array_unique(array_map('intval', $indici_motivazioni)));
+
+        // Coontrollo motivazione per anni successivi al 2021: se l'anno di fornitura è maggiore di 2021, la motivazione sarà "Cessione ramo d'azienda", altrimenti sarà il testo presente in sgravi_documenti.Text.
+        $testoMotivazione = ((int)$annoFornitura > 2021)
+            ? "'Cessione ramo d\\'azienda'"
+            : "SD.Text";
+
         $rs_mot = $cls_db->getResults($cls_db->ExecuteQuery(
+            // "SELECT S.Partita_ID,
+            //         GROUP_CONCAT(CONCAT(COALESCE(DT.Description, '(tipo sconosciuto)'), ': ', SD.Text) ORDER BY SD.ID SEPARATOR ' | ') AS motivazione
+            //  FROM sgravio S
+            //  LEFT JOIN sgravi_documenti SD ON SD.Sgravio_ID = S.ID
+            //  LEFT JOIN document_type DT ON DT.Id = SD.DocumentTypeId
+            //  WHERE S.Tipo = 1 AND S.CC = '" . $c . "' AND S.Partita_ID IN (" . $partita_ids_csv . ")
+            //  GROUP BY S.Partita_ID"
             "SELECT S.Partita_ID,
-                    GROUP_CONCAT(CONCAT(COALESCE(DT.Description, '(tipo sconosciuto)'), ': ', SD.Text) ORDER BY SD.ID SEPARATOR ' | ') AS motivazione
-               FROM sgravio S
-               LEFT JOIN sgravi_documenti SD ON SD.Sgravio_ID = S.ID
-               LEFT JOIN document_type DT ON DT.Id = SD.DocumentTypeId
-              WHERE S.Tipo = 1 AND S.CC = '" . $c . "' AND S.Partita_ID IN (" . $partita_ids_csv . ")
-              GROUP BY S.Partita_ID"
+                -- Colonna motivazione: unisce i dati quando TableTypeID è DIVERSO da 2
+                GROUP_CONCAT(
+                    -- questo comprende anche i record di document_type con TableTypeID nullo
+                    -- CASE WHEN DT.TableTypeID IS NULL OR DT.TableTypeID != 2 THEN
+                    -- altrimenti GROUP_CONCAT li ignora
+                    CASE WHEN DT.TableTypeID != 2 THEN 
+                        CONCAT(COALESCE(DT.Description, '(tipo sconosciuto)'), ': ', $testoMotivazione)
+                    END 
+                    ORDER BY SD.ID SEPARATOR ' | '
+                ) AS motivazione,
+                
+                -- Nuova colonna motivazione2: unisce i dati quando TableTypeID è DIVERSO da 1
+                GROUP_CONCAT(
+                    -- questo comprende anche i record di document_type con TableTypeID nullo 
+                    -- CASE WHEN DT.TableTypeID IS NULL OR DT.TableTypeID != 1 THEN
+                    -- altrimenti GROUP_CONCAT li ignora
+                    CASE WHEN DT.TableTypeID != 1 THEN 
+                        CONCAT(COALESCE(DT.Description, '(tipo sconosciuto)'), ': ', $testoMotivazione)
+                    END 
+                    ORDER BY SD.ID SEPARATOR ' | '
+                ) AS motivazione2
+                
+            FROM sgravio S
+            LEFT JOIN sgravi_documenti SD ON SD.Sgravio_ID = S.ID
+            LEFT JOIN document_type DT ON DT.Id = SD.DocumentTypeId
+            WHERE S.Tipo = 1 AND S.CC = '" . $c . "' AND S.Partita_ID IN (" . $partita_ids_csv . ")
+            GROUP BY S.Partita_ID"
         ));
-        $motivazioni_per_partita = array();
+        $motivazioni_per_partita = array();                 // array colonna ingiunzione
+        $motivazioni_per_partita2 = array();                // array colonan coazione
         foreach ($rs_mot as $r_mot) {
             $motivazioni_per_partita[(int)$r_mot['Partita_ID']] = $r_mot['motivazione'] !== null ? $r_mot['motivazione'] : '';
+            $motivazioni_per_partita2[(int)$r_mot['Partita_ID']] = $r_mot['motivazione2'] !== null ? $r_mot['motivazione2'] : '';
         }
         foreach ($indici_motivazioni as $excel_idx => $pid) {
             $dataExcel[$excel_idx][10] = isset($motivazioni_per_partita[$pid]) ? $motivazioni_per_partita[$pid] : '';
+            $dataExcel[$excel_idx][11] = isset($motivazioni_per_partita2[$pid]) ? $motivazioni_per_partita2[$pid] : '';
         }
     }
 

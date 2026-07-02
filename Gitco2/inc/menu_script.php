@@ -208,6 +208,9 @@
             case '4024':
                 menulink = $stampe + "importazioni_290.php?" + stringaMODE;
                 break;
+            case '4027':
+                menulink = $stampe + "estratto_debito.php?" + stringaMODE;
+                break;
             //ENTI ESTERNI (5000)
             case '5001':
                 menulink = "<?=WEB_ROOT?>/parametri/authorityOffice.php?" + stringaMODE;

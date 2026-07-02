@@ -563,6 +563,51 @@ class cls_elaborazioniUtils
             }
         }
 
+        if(isset($filter['ente'])){
+            if($filter['ente']!=null && $filter['ente']!=""){
+
+                $a_return[$i]['label'] = "ENTE";
+                $a_return[$i]['value'] = $filter['ente'];
+
+                $i++;
+            }
+        }
+
+        if(!empty($filter['da_anno']) && !empty($filter["a_anno"])){
+
+            $a=$i;
+            if($filter['da_anno']!=null && $filter['da_anno']!=""){
+                if(!isset($a_return[$i]['value']))
+                    $a_return[$i]['value'] = "";
+                $a_return[$i]['label'] = "ANNO";
+                $a_return[$i]['value'] .= "Dal ". $filter['da_anno'];
+                $a=$i+1;
+            }
+            if($filter['a_anno']!=null && $filter['a_anno']!=""){
+                if(!isset($a_return[$i]['value']))
+                    $a_return[$i]['value'] = "";
+
+                $a_return[$i]['label'] = "ANNO";
+                $a_return[$i]['value'] .= " al ". $filter['a_anno'];
+                $a=$i+1;
+            }
+            $i=$a;
+        }
+        else if(!empty($filter['da_anno'])){
+            if($filter['da_anno']!=null && $filter['da_anno']!=""){
+                $a_return[$i]['label'] = "ANNO";
+                $a_return[$i]['value'] = "Dal ". $filter['da_anno'];
+                $i++;
+            }
+        }
+        else if(!empty($filter['a_anno'])){
+            if($filter['a_anno']!=null && $filter['a_anno']!=""){
+                $a_return[$i]['label'] = "ANNO";
+                $a_return[$i]['value'] = "Fino al ". $filter['a_anno'];
+                $i++;
+            }
+        }
+
         return $a_return;
     }
 

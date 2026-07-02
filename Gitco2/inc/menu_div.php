@@ -251,6 +251,7 @@
                                         <li><a onclick="menuClick('4020');" href="#">Resoconto INIPEC</a></li>
                                         <li><a onclick="menuClick('4021');" href="#">Resoconto Visure ACI</a></li>
                                         <li><a onclick="menuClick('4023');" href="#">Storico Azioni</a></li>
+                                        <li><a onclick="menuClick('4027');" href="#">Estratto conto di debito</a></li>
                                         <!--<li><a href="#" onclick="menuClick('1101');" data-toggle="dropdown">Atti</a></li>
                                         
                                         <li role="separator" class="divider"></li>
