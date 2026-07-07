@@ -2,3 +2,4 @@
 /sarida
 .env
 .env.php
+logFile.log

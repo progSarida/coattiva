@@ -39,7 +39,7 @@ $a_partita   = $cls_help->getVar("a_partita");
 $da_data     = $cls_help->getVar("da_data") . " 00:00:00";
 $a_data      = $cls_help->getVar("a_data")  . " 23:59:59";
 $printType   = $cls_help->getVar("printType");
-if ($printType != 'excel') $printType = 'pdf';
+// if ($printType != 'excel') $printType = 'pdf';
 
 $filter = array();
 
@@ -135,13 +135,25 @@ try {
     // spazio minimo per aggiungere una riga atto: la riga stessa + riga totale
     $h_min_riga     = $h_riga + $h_totale;
 
-    // ===================== EXCEL intestazione =====================
+    // ===================== EXCEL intestazione (Classico) =====================
     $dataExcel = array();
     $dataExcel[] = array(
         "<b>#</b>","<b>Comune ID</b>","<b>Soggetto</b>","<b>CF/P.IVA</b>","<b>Indirizzo</b>",
         "<b>Anno Rif.</b>","<b>Tipo</b>","<b>Info Cartella</b>","<b>Carico</b>",
         "<b>Descrizione</b>","<b>Modalità e Stato Notifica</b>","<b>Data Notifica</b>"
     );
+    // ===================== EXCEL intestazione (Simile a PDF) =====================
+    $dataExcelPDF = array();
+    $dataExcelPDF[] = array(
+        "<b>Soggetto</b>","<b>CF/P.IVA</b>","<b>Indirizzo</b>"
+    );
+    $dataExcelPDF[] = array(
+        "<b>Comune ID</b>","<b>Anno Rif.</b>","<b>Tipo</b>","<b>Info Cartella</b>"
+    );
+    $dataExcelPDF[] = array(
+        "<b>Tributo</b>","<b>Descrizione</b>","<b>Carico</b>","<b>Modalità e Stato Notifica</b>","<b>Data Notifica</b>"
+    );
+    $dataExcelPDF[] = array();
     $totale_carico_complessivo = 0;
 
     // ---- stampa intestazione ente sulla prima pagina ----
@@ -424,7 +436,7 @@ try {
                 "no", $styleRetta, $array_align_atti, 0, $array_width_atti
             );
 
-            // Excel
+            // Excel Classico
             $dataExcel[] = array(
                 (string)$atto['num'],
                 $atto['num'] == 1 ? $partita['Comune_ID'] : '',
@@ -438,6 +450,26 @@ try {
                 (string)$atto['descrizione'],
                 (string)$atto['notifica'],
                 (string)$atto['data_notifica'],
+            );
+            // Excel PDF-simile
+            if ($atto['num'] == 1){
+                $dataExcelPDF[] = array(
+                    $nomeUtente, 
+                    $cfUtente, 
+                    $indirizzoUtente
+                );
+                $dataExcelPDF[] = array(
+                    (string)$partita['Comune_ID'], 
+                    (string)$partita['Anno_Riferimento'], 
+                    $partita['Tipo'], 
+                    $partita['Tributo'][0]['Info_Cartella'] ?? ''
+                );
+            }
+            $dataExcelPDF[] = array(
+                (string)$atto['codice'],
+                number_format($carico, 2, ',', '.'),
+                (string)$atto['descrizione'],
+                (string)$atto['notifica']
             );
         } // fine foreach attiLista
 
@@ -463,6 +495,9 @@ try {
 
         $dataExcel[] = array("","","","","","","","TOTALE PARTITA", number_format($totCaricoPartita,2,',','.'),"","","");
         $dataExcel[] = array();
+
+        $dataExcelPDF[] = array("TOTALE PARTITA", number_format($totCaricoPartita,2,',','.'),"","");
+        $dataExcelPDF[] = array();
 
     } // fine foreach partite
 
@@ -524,6 +559,14 @@ try {
         $pathFILE .= "/" . $nameFILE;
         if (count($dataExcel) > 1)
             SimpleXLSXGen::fromArray($dataExcel)
+                ->setDefaultFont('Courier New')
+                ->setDefaultFontSize(10)
+                ->saveAs($pathFILE);
+    } else if ($printType == 'mix'){
+        $nameFILE = "Estratto_Conto_Debito_" . $suffisso . ".xlsx";
+        $pathFILE .= "/" . $nameFILE;
+        if (count($dataExcelPDF) > 1)
+            SimpleXLSXGen::fromArray($dataExcelPDF)
                 ->setDefaultFont('Courier New')
                 ->setDefaultFontSize(10)
                 ->saveAs($pathFILE);

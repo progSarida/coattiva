@@ -259,7 +259,8 @@ foreach ($resultPartite as $key => $value){
                 <div class="col-lg-6">
                     <select id="printType" name="printType" tabindex=9 class="form-control resize validateCustom vld_Custom_r">
                         <option value="pdf">PDF</option>
-                        <option value="excel">Excel</option>
+                        <option value="excel">Excel (Classico)</option>
+                        <option value="mix">Excel (Simile a PDF)</option>
                     </select>
                 </div>
             </div>
