@@ -81,7 +81,7 @@ class cls_print{
                         $this->year_blank = "y";
                         break;
                     case "notifiche":
-                        $this->a_type = array("title"=>"Gestione notifiche","action"=>"elenco_notifiche.php");
+                        $this->a_type = array("title"=>"Cartoline notifiche","action"=>"elenco_notifiche.php");
                         $this->a_filters = array("PrinterId","city","lastAct","actType","notificationImg","flow","flowNumber","flowDate",
                             "notificationDate","importNotification","notificationAndAnomaly",
                             "notificationMode","notificationStock","notificationAnomaly",

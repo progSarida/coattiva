@@ -251,7 +251,7 @@ try {
                     'anno'           => (string)($t['Anno_Riferimento'] ?? ''),
                     'carico'         => (float)($t['Interessi'] ?? 0),
                     'descrizione'    => 'Ult.Inters. - ' . $crono,
-                    'notifica'       => $not,
+                    'notifica'       => '',
                     'data_notifica'  => $dataFmt
                 );
             $j++;
