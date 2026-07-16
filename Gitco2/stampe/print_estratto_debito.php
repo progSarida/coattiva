@@ -508,8 +508,13 @@ try {
     $pdf->SetY($margine_top);
     $pdf->setCellPaddings(2, 0, 2, 1);
 
+    if (strpos($nomeEnteIntestazione, "Provincia") !== false || strpos($nomeEnteIntestazione, "Unione") !== false) {
+        $nomeEnteCompleto = $nomeEnteIntestazione;
+    } else {
+        $nomeEnteCompleto = "Comune di " . $nomeEnteIntestazione;
+    }
     $pdf->SetFont('Arial', 'B', 18);
-    $pdf->Cell(0, 0, strtoupper("STAMPA ESTRATTO CONTO DI DEBITO " . strtoupper($nomeEnteIntestazione)), "B", 1, 'L', 0, '', 0, false, 'T', 'M');
+    $pdf->Cell(0, 0, strtoupper("ESTRATTO CONTO DI DEBITO " . strtoupper($nomeEnteCompleto)), "B", 1, 'L', 0, '', 0, false, 'T', 'M');
     $pdf->Ln(3);
     $pdf->SetFont('Arial', 'B', 11);
     $pdf->Cell(0, 0, "Stampato in data " . date("d/m/Y"), 0, 1, 'L');
